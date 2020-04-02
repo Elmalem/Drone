@@ -7,7 +7,7 @@ import javax.swing.*;
 public class SimulationWindow {
 
 	private JFrame frame;
-
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -36,11 +36,9 @@ public class SimulationWindow {
 		frame.getContentPane().setLayout(null);
 		
 		
-		
 		/*
 		 * Stop\Resume
 		 */
-	
 		JButton stopBtn = new JButton("Start/Pause");
 		stopBtn.addActionListener(new ActionListener()
 		{
@@ -274,8 +272,8 @@ public class SimulationWindow {
 				new Point(73,68),
 				new Point(84,73),
 				new Point(92,100)};
-		
-		Map map = new Map("C:\\Users\\user\\git\\Drone\\Maps\\p1" + map_num + ".png",startPoints[map_num-1]);
+				
+		Map map = new Map(Config.path+"\\Maps\\p1" + map_num + ".png",startPoints[map_num-1]);
 		
 		algo1 = new AutoAlgo1(map);
 		
