@@ -5,19 +5,6 @@ public class Algorithm {
 
 	enum PixelState {blocked,explored,unexplored,visited};
 	
-	
-	int map_size = 3000;
-	PixelState map[][];
-	Drone drone;
-	Point droneStartingPoint;
-	ArrayList<Point> points;
-	int isRotating;
-	ArrayList<Double> degrees_left;
-	ArrayList<Func> degrees_left_func;
-	boolean isSpeedUp = false;
-	Graph mGraph = new Graph();
-	CPU ai_cpu;
-	
 	public Algorithm(Map realMap) {
 		degrees_left = new ArrayList<>();
 		degrees_left_func =  new ArrayList<>();
@@ -35,6 +22,18 @@ public class Algorithm {
 	public void update(int deltaTime) {
 		Utils.updateForAlgo(deltaTime , this);
 	}
+		
+	int map_size = 3000;
+	PixelState map[][];
+	Drone drone;
+	Point droneStartingPoint;
+	ArrayList<Point> points;
+	int isRotating;
+	ArrayList<Double> degrees_left;
+	ArrayList<Func> degrees_left_func;
+	boolean isSpeedUp = false;
+	Graph mGraph = new Graph();
+	CPU ai_cpu;
 	
 	boolean is_init = true;
 	double lastFrontLidarDis = 0;

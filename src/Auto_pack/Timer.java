@@ -2,23 +2,21 @@ package Auto_pack;
 
 public class Timer {
 	
-	public static long time = 0;
+	private static double time;
 	
 	public static void start() {
-		Timer.time = System.currentTimeMillis();
+		Timer.time = System.nanoTime();
 	}
 	
-	public static String displaySeconds() {
-		return "Time (per seconds) : " + Timer.getSeconds();
+	public static void reset() {
+		Timer.time = 0;
 	}
 	
-	public static double getSeconds() {
-		Timer.time = System.currentTimeMillis() - Timer.time;
-		return (double)Timer.time /  1000000000L;
+	public static double getTimeBySeconds() {
+		if(Timer.time != 0)
+			return (double)(System.nanoTime() - Timer.time) / 1000000000;
+		else
+			return 0;
 	}
 	
-	public static long getMillis() {
-		Timer.time = System.currentTimeMillis() - Timer.time;
-		return Timer.time;
-	}
 }

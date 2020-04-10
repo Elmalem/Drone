@@ -1,16 +1,16 @@
 package Auto_pack;
 import java.util.Random;
-
 import javax.swing.JLabel;
-
 import Auto_pack.Algorithm.PixelState;
+
+// This class present most of the functionalities in the program
 
 public class Utils {
 	
 	public static void updateInfo(int deltaTime , JLabel info_label , JLabel info_label2 , Algorithm algo) {
 		info_label.setText(algo.drone.getInfoHTML());
 		info_label2.setText("<html>" + String.valueOf(algo.counter) + " <BR>isRisky:" + String.valueOf(algo.is_risky) + 
-				"<BR>" + String.valueOf(algo.risky_dis) + "</html>");
+				"<BR>" + String.valueOf(algo.risky_dis) +  "<BR> Time : " + String.valueOf(Timer.getTimeBySeconds()) + "</html>");
 	}
 
 	public static void stopCPUS() {
@@ -18,14 +18,13 @@ public class Utils {
 	}
 	
 	public static void resumseCPUS() {
-		CPU.stopAllCPUS();
+		CPU.resumeAllCPUS();
 	}
 	
 	public static void play(Algorithm algo) {
 		algo.drone.play();
 		algo.ai_cpu.play();
 	}
-
 
 	// CM sign
 	public static Point getPointByDistance(Point fromPoint, double rotation, double distance) {
@@ -181,7 +180,8 @@ public class Utils {
 				
 			if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
 				System.out.println("Game over !");
-			    System.exit(0);
+				stopCPUS();
+//			    System.exit(0);
 			}
 			Utils.spinBy(spin_by,true, algo, new Func() { 
 					@Override
