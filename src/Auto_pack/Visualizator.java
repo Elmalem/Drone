@@ -17,7 +17,6 @@ public class Visualizator {
 	// This class only generate the visualization settings 
 	
 	public static void initialize(Simulator main) {
-		Timer.reset();
 		main.frame = new JFrame();
 		main.frame.setSize(1800,700);
 		main.frame.setTitle("Drone Simulator");
@@ -26,22 +25,32 @@ public class Visualizator {
 		
 		// Func buttons 
 		
-		JButton stopBtn = new JButton("Start/Pause");
+		JButton stopBtn = new JButton("Pause");
 		stopBtn.addActionListener(new ActionListener()
 		{
 			  public void actionPerformed(ActionEvent e)
-			  {
-				  if(Simulator.toogleStop) {
-					  CPU.stopAllCPUS();
-				  } else {
-					  CPU.resumeAllCPUS();
-				  }
+			  {					 
+				  Timer.pause();
+				  CPU.stopAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
 		});
 		stopBtn.setBounds(ButtonWeights.get(0), ButtonHeights.get(0), 110, 30);
 		main.frame.getContentPane().add(stopBtn);
 
+		JButton resumeBtn = new JButton("Resume");
+		resumeBtn.addActionListener(new ActionListener()
+		{
+			  public void actionPerformed(ActionEvent e)
+			  {
+				  Timer.resume();
+				  CPU.resumeAllCPUS();
+				  Simulator.toogleStop = !Simulator.toogleStop;
+			  }
+		});
+		resumeBtn.setBounds(ButtonWeights.get(0), ButtonHeights.get(1), 110, 30);
+		main.frame.getContentPane().add(resumeBtn);
+		
 		JButton toogleMapBtn = new JButton("Toogle Map");
 		toogleMapBtn.addActionListener(new ActionListener()
 		{
@@ -50,7 +59,7 @@ public class Visualizator {
 				  Simulator.toogleRealMap = !Simulator.toogleRealMap;
 			  }
 		});
-		toogleMapBtn.setBounds(ButtonWeights.get(0), ButtonHeights.get(1), 110, 30);
+		toogleMapBtn.setBounds(ButtonWeights.get(0), ButtonHeights.get(2), 110, 30);
 		main.frame.getContentPane().add(toogleMapBtn);
 		
 		JButton toogleAIBtn = new JButton("Toogle AI");
@@ -62,7 +71,7 @@ public class Visualizator {
 				  Simulator.toogleAI = !Simulator.toogleAI;
 			  }
 		});
-		toogleAIBtn.setBounds(ButtonWeights.get(0), ButtonHeights.get(2), 110, 30);
+		toogleAIBtn.setBounds(1512, 300, 150, 50);
 		main.frame.getContentPane().add(toogleAIBtn);
 
 		JButton returnBtn = new JButton("Return Home");
