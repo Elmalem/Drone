@@ -35,10 +35,6 @@ public class SimulationWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		
-		/*
-		 * Stop\Resume
-		 */
 		JButton stopBtn = new JButton("Start/Pause");
 		stopBtn.addActionListener(new ActionListener()
 		{

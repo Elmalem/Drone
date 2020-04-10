@@ -1,20 +1,17 @@
-import javax.imageio.ImageIO;
-
-import java.awt.Graphics;
-import java.awt.Window;
+package Auto_pack;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Drone {
+	
 	private double gyroRotation;
 	private Point sensorOpticalFlow;
 	private Point pointFromStart;
 	public Point startPoint;
 	public List<Lidar> lidars;
-	private String drone_img_path = Config.path + "\\Maps\\drone_3_pixels.png";
+	public String drone_img_path = Config.imageSourcePath + "\\Maps\\drone_3_pixels.png";
 	public Map realMap;
 	private double rotation;
 	private double speed;
@@ -22,17 +19,13 @@ public class Drone {
 	
 	public Drone(Map realMap) {
 		this.realMap = realMap;
-		
 		this.startPoint = realMap.drone_start_point;
 		pointFromStart = new Point();
 		sensorOpticalFlow = new Point();
 		lidars = new ArrayList<>();
-
-		speed = 0.2;
-		
+		speed = 0.2;	
 		rotation = 0;
-		gyroRotation = rotation;
-		
+		gyroRotation = rotation;	
 		cpu = new CPU(100,"Drone");
 	}
 	
@@ -61,12 +54,12 @@ public class Drone {
 
 		double distancedMoved = (speed*100)*((double)deltaTime/1000);
 		
-		pointFromStart =  Tools.getPointByDistance(pointFromStart, rotation, distancedMoved);
+		pointFromStart =  Utils.getPointByDistance(pointFromStart, rotation, distancedMoved);
 		
-		double noiseToDistance = Tools.noiseBetween(WorldParams.min_motion_accuracy,WorldParams.max_motion_accuracy,false);
-		sensorOpticalFlow = Tools.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved*noiseToDistance);
+		double noiseToDistance = Utils.noiseBetween(Config.min_motion_accuracy,Config.max_motion_accuracy,false);
+		sensorOpticalFlow = Utils.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved*noiseToDistance);
 		
-		double noiseToRotation = Tools.noiseBetween(WorldParams.min_rotation_accuracy,WorldParams.max_rotation_accuracy,false);
+		double noiseToRotation = Utils.noiseBetween(Config.min_rotation_accuracy,Config.max_rotation_accuracy,false);
 		double milli_per_minute = 60000;
 		gyroRotation += (1-noiseToRotation)*deltaTime/milli_per_minute;
 		gyroRotation = formatRotation(gyroRotation);
@@ -94,7 +87,7 @@ public class Drone {
 
 	
 	public void rotateLeft(int deltaTime) {
-		double rotationChanged = WorldParams.rotation_per_second*deltaTime/1000;
+		double rotationChanged = Config.rotation_per_second*deltaTime/1000;
 		
 		rotation += rotationChanged;
 		rotation = formatRotation(rotation);
@@ -104,7 +97,7 @@ public class Drone {
 	}
 	
 	public void rotateRight(int deltaTime) {
-		double rotationChanged = -WorldParams.rotation_per_second*deltaTime/1000;
+		double rotationChanged = -Config.rotation_per_second*deltaTime/1000;
 		
 		rotation += rotationChanged;
 		rotation = formatRotation(rotation);
@@ -114,14 +107,14 @@ public class Drone {
 	}
 	
 	public void speedUp(int deltaTime) {
-		speed += (WorldParams.accelerate_per_second*deltaTime/1000);
-		if(speed > WorldParams.max_speed) {
-			speed =WorldParams.max_speed;
+		speed += (Config.accelerate_per_second*deltaTime/1000);
+		if(speed > Config.max_speed) {
+			speed =Config.max_speed;
 		}
 	}
 	
 	public void slowDown(int deltaTime) {
-		speed -= (WorldParams.accelerate_per_second*deltaTime/1000);
+		speed -= (Config.accelerate_per_second*deltaTime/1000);
 		if(speed < 0) {
 			speed = 0;
 		}
@@ -131,22 +124,6 @@ public class Drone {
 	boolean initPaint = false;
 	BufferedImage mImage;
 	int j=0;
-	public void paint(Graphics g) {
-		if(!initPaint) {
-			try {
-				File f = new File(drone_img_path);
-				mImage = ImageIO.read(f);
-				initPaint = true;
-			} catch(Exception ex) {
-				
-			}
-		}
-
-		for(int i=0;i<lidars.size();i++) {
-			Lidar lidar = lidars.get(i);
-			lidar.paint(g);
-		}
-	}
 	
 	public String getInfoHTML() {
 		DecimalFormat df = new DecimalFormat("#.####");

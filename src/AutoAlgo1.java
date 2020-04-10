@@ -207,6 +207,7 @@ public class AutoAlgo1 {
 	public void paint(Graphics g) {
 
 		if(SimulationWindow.toogleRealMap) {
+//			Painter.paintMap(g, drone.realMap);
 			drone.realMap.paint(g);
 		}
 		
