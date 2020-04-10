@@ -55,6 +55,7 @@ public class Lidar{
 		g.drawLine((int)actualPointToShoot.x,(int)actualPointToShoot.y, (int)to.x, (int)to.y);
 	}
 	
+	
 
 	
 }

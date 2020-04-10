@@ -205,6 +205,7 @@ public class AutoAlgo1 {
 	}
 	
 	public void paint(Graphics g) {
+
 		if(SimulationWindow.toogleRealMap) {
 			drone.realMap.paint(g);
 		}
@@ -309,19 +310,21 @@ public class AutoAlgo1 {
 		} else {
 			if(!try_to_escape) {
 				try_to_escape = true;
+				
 				Lidar lidar1 = drone.lidars.get(1);
 				double a = lidar1.current_distance;
 				
 				Lidar lidar2 = drone.lidars.get(2);
 				double b = lidar2.current_distance;
 				
-				
+				Lidar lidar0 = drone.lidars.get(0);
+				double c = lidar0.current_distance;
 				
 				int spin_by = max_angle_risky;
 			
-			
-				
-				if(a > 270 && b > 270) {
+			System.out.println(a+" , "+b+" , "+c+" , ("+dronePoint.x+","+dronePoint.y+")");
+					
+					if(a > 270 && b > 270) {
 					is_lidars_max = true;
 					Point l1 = Tools.getPointByDistance(dronePoint, lidar1.degrees + drone.getGyroRotation(), lidar1.current_distance);
 					Point l2 = Tools.getPointByDistance(dronePoint, lidar2.degrees + drone.getGyroRotation(), lidar2.current_distance);
@@ -350,15 +353,25 @@ public class AutoAlgo1 {
 						
 						spin_by *= (-1 ); 
 					}
+									
+					
 				} else {
 					
 					
 					if(a < b ) {
 						spin_by *= (-1 ); 
 					}
+					
+					else if(risky_dis >= 100) {//new snir
+						spin_by *= (-1 ); 
+						System.out.println("Im in here");
+					}
 				}
-				
-				
+				if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {//snir
+					System.out.println("GAME OVER!!!");
+				    System.exit(0);
+
+				}
 				
 				spinBy(spin_by,true,new Func() { 
 						@Override
