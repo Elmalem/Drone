@@ -10,41 +10,32 @@ public class Simulator {
 	public static Algorithm algo;
 	
 	public Simulator() {
-		Visualizator.initialize(this);
+		Visualizator.initialize(this); 
 		start();
 	}
 	
 	public void start() {
-		int map_index = 4;
-		Map map = new Map(Config.imageSourcePath+"\\Maps\\p1" + map_index + ".png",Config.startPoints[map_index-1]);
+		
+		Map map = new Map(Config.imageSourcePath+"\\Maps\\p1" + 4 + ".png",Config.startPoints[3]);
 		algo = new Algorithm(map);
 		
 		Painter painter = new Painter(algo);
 		painter.setBounds(0, 0, 2000, 2000);
 		frame.getContentPane().add(painter);
 		
-		CPU painterCPU = new CPU(200,"painter"); // 60 FPS painter
-		painterCPU.addFunction(frame::repaint);
-		
-		painterCPU.play();
+		CPU cpu = new CPU("Main"); // 60 FPS painter
+		cpu.functions_list.add(frame::repaint);
+		cpu.functions_list.add(algo.drone::update);
+		cpu.functions_list.add(this::updateInfo);
+		cpu.play();
 		Utils.play(algo);
-		
-		CPU updatesCPU = new CPU(60,"updates");
-		updatesCPU.addFunction(algo.drone::update);
-		
-		updatesCPU.play();
-		
-		CPU infoCPU = new CPU(6,"update_info");
-		infoCPU.addFunction(this::updateInfo);
-		
-		infoCPU.play();
+
 	}
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Timer.reset();
 					Simulator simulator_ = new Simulator();
 					simulator_.frame.setVisible(true);
 				} catch (Exception e) {

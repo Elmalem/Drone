@@ -6,6 +6,7 @@ public class Algorithm {
 	enum PixelState {blocked,explored,unexplored,visited};
 	
 	public Algorithm(Map realMap) {
+		mGraph = new Graph();
 		degrees_left = new ArrayList<>();
 		degrees_left_func =  new ArrayList<>();
 		points = new ArrayList<Point>();	
@@ -15,46 +16,51 @@ public class Algorithm {
 		drone.addLidar(-90);
 		Utils.initMap(this);		
 		isRotating = 0;
-		ai_cpu = new CPU(200,"Auto_AI");
-		ai_cpu.addFunction(this::update);
+		ai_cpu = new CPU("Algorithm cpu - AI");
+		ai_cpu.functions_list.add(this::update);
 	}
 	
 	public void update(int deltaTime) {
 		Utils.updateForAlgo(deltaTime , this);
 	}
+	
+	// Class configuration  by types
 		
 	int map_size = 3000;
-	PixelState map[][];
-	Drone drone;
-	Point droneStartingPoint;
-	ArrayList<Point> points;
 	int isRotating;
-	ArrayList<Double> degrees_left;
-	ArrayList<Func> degrees_left_func;
-	boolean isSpeedUp = false;
-	Graph mGraph = new Graph();
-	CPU ai_cpu;
-	
-	boolean is_init = true;
+	int leftOrRight = 1;
+	int counter = 0;
+
 	double lastFrontLidarDis = 0;
-	boolean isRotateRight = false;
 	double changedRight = 0;
 	double changedLeft = 0;
+	double  risky_dis = 0;
+	double save_point_after_seconds = 3;
+	double lastGyroRotation = 0;
+	
+	boolean is_init = true;
+	boolean isRotateRight = false;
 	boolean tryToEscape = false;
-	int leftOrRight = 1;
-	double max_rotation_to_direction = 20;
 	boolean  is_finish = true;
 	boolean isLeftRightRotationEnable = true;
 	boolean is_risky = false;
-	int max_risky_distance = 150;
 	boolean try_to_escape = false;
-	double  risky_dis = 0;
-	int max_angle_risky = 10;
 	boolean is_lidars_max = false;
-	double save_point_after_seconds = 3;
-	double max_distance_between_points = 100;
 	boolean start_return_home = false;
+	boolean isSpeedUp = false;
+
 	Point init_point;
-	int counter = 0;
-	double lastGyroRotation = 0;
+	Point droneStartingPoint;
+
+	ArrayList<Point> points;
+	ArrayList<Double> degrees_left;
+	ArrayList<Func> degrees_left_func;
+	
+	PixelState map[][];
+	
+	Drone drone;
+	
+	Graph mGraph;
+	
+	CPU ai_cpu;	
 }

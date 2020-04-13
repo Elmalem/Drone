@@ -94,6 +94,5 @@ public class Painter extends JComponent {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Painter.paintForAlgo(g , algo.droneStartingPoint , algo.points ,  algo.drone , algo.map_size , algo.map);
-	
 	}
 }

@@ -6,15 +6,15 @@ import java.util.List;
 
 public class Drone {
 	
+	public String drone_img_path = Config.imageSourcePath + "\\Maps\\drone_3_pixels.png";
 	private double gyroRotation;
+	private double rotation;
+	private double speed;
 	private Point sensorOpticalFlow;
 	private Point pointFromStart;
 	public Point startPoint;
 	public List<Lidar> lidars;
-	public String drone_img_path = Config.imageSourcePath + "\\Maps\\drone_3_pixels.png";
 	public Map realMap;
-	private double rotation;
-	private double speed;
 	private CPU cpu;
 	
 	public Drone(Map realMap) {
@@ -26,7 +26,7 @@ public class Drone {
 		speed = 0.2;	
 		rotation = 0;
 		gyroRotation = rotation;	
-		cpu = new CPU(100,"Drone");
+		cpu = new CPU("Drone");
 	}
 	
 	public void play() {
@@ -41,7 +41,7 @@ public class Drone {
 	public void addLidar(int degrees) {
 		Lidar lidar = new Lidar(this,degrees);
 		lidars.add(lidar);
-		cpu.addFunction(lidar::getSimulationDistance);
+		cpu.functions_list.add(lidar::getSimulationDistance);
 	}
 	
 	public Point getPointOnMap() {
@@ -51,17 +51,22 @@ public class Drone {
 	}
 	
 	public void update(int deltaTime) {
-
-		double distancedMoved = (speed*100)*((double)deltaTime/1000);
+		
+		double distancedMoved = speed * (double)deltaTime/10;
+		
+//		System.out.println("Distance from start: " + distancedMoved + " , deltaTime : " + deltaTime);
 		
 		pointFromStart =  Utils.getPointByDistance(pointFromStart, rotation, distancedMoved);
 		
 		double noiseToDistance = Utils.noiseBetween(Config.min_motion_accuracy,Config.max_motion_accuracy,false);
+		
 		sensorOpticalFlow = Utils.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved*noiseToDistance);
 		
 		double noiseToRotation = Utils.noiseBetween(Config.min_rotation_accuracy,Config.max_rotation_accuracy,false);
-		double milli_per_minute = 60000;
-		gyroRotation += (1-noiseToRotation)*deltaTime/milli_per_minute;
+		
+		// delta / milli_per_minute
+		
+		gyroRotation += (1-noiseToRotation)*deltaTime/60000;
 		gyroRotation = formatRotation(gyroRotation);
 	}
 	

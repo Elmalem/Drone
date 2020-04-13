@@ -26,7 +26,7 @@ public class Utils {
 		algo.ai_cpu.play();
 	}
 
-	// CM sign
+	// CM size sign
 	public static Point getPointByDistance(Point fromPoint, double rotation, double distance) {
 		double radians = Math.PI*(rotation/180);
 		
@@ -50,7 +50,6 @@ public class Utils {
 		} else {
 			return noiseToDistance - noise;
 		}
-		
 	}
 	
 	public static void setPixel(double x, double y,PixelState state , PixelState[][] map) {
@@ -68,9 +67,9 @@ public class Utils {
 	}
 	
 	public static double getRotationBetweenPoints (Point from, Point to) {
-		double y1 = from.y - to.y;
-		double x1 = from.x - to.x;
-		double radians = Math.atan(y1/ x1);	
+		double y_diff = from.y - to.y;
+		double x_diff = from.x - to.x;
+		double radians = Math.atan(y_diff/ x_diff);	
 		double rotation = radians * 180 / Math.PI; 
 		return rotation;
 	}
@@ -80,66 +79,76 @@ public class Utils {
 			return;
 		}
 	
+		Point dronePoint = algo.drone.getOpticalSensorLocation();
+
 		if(algo.is_init) {
 			Utils.speedUp(algo);
-			Point dronePoint = algo.drone.getOpticalSensorLocation();
+			// Start location
 			algo.init_point = new Point(dronePoint);
 			algo.points.add(dronePoint);
 			algo.mGraph.addVertex(dronePoint);
 			algo.is_init = false;
 		}
 		
-		Point dronePoint = algo.drone.getOpticalSensorLocation();
-
 		if(Simulator.return_home) {
-			
-			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  algo.max_distance_between_points) {
-				if(algo.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  algo.max_distance_between_points/5) {
+			// 100 is max_distance_between_points
+			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  100) {
+				// 20 is max_distance_between_points / 5
+				if(algo.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  20) {
 					Utils.speedDown(algo);
 				} else {
 					Utils.removeLastPoint(algo);
 				}
 			}
 		} else {
-			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) >=  algo.max_distance_between_points) {
+			// 100 is max_distance_between_points
+			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) >=  100) {
+				/* $$$$$$$$$$$$$$$$$$$ */
+				System.out.println("SIGN...");
+				/* $$$$$$$$$$$$$$$$$$$ */
 				algo.points.add(dronePoint);
 				algo.mGraph.addVertex(dronePoint);
 			}
 		}
 		
 		if(!algo.is_risky) {
-			Lidar lidar = algo.drone.lidars.get(0);
-			if(lidar.current_distance <= algo.max_risky_distance ) {
-				algo.is_risky = true;
-				algo.risky_dis = lidar.current_distance;				
+			for (int i = 0; i < algo.drone.lidars.size(); i++) {
+				Lidar lidar = algo.drone.lidars.get(i);
+				switch(i) {
+				// 150 present algo max risky distance
+				// 50 is 150 / 3
+					case 0:
+						if(lidar.current_distance <= 150 ) {
+							algo.is_risky = true;
+							algo.risky_dis = lidar.current_distance;				
+						}
+						break;
+					case 1:
+					case 2:
+						if(lidar.current_distance <= 50 ) {
+							algo.is_risky = true;
+						}
+						break;
+				}
 			}
-			
-			Lidar lidar1 = algo.drone.lidars.get(1);
-			if(lidar1.current_distance <= algo.max_risky_distance/3 ) {
-				algo.is_risky = true;
-			}
-			
-			Lidar lidar2 = algo.drone.lidars.get(2);
-			if(lidar2.current_distance <= algo.max_risky_distance/3 ) {
-				algo.is_risky = true;
-			}
-			
 		} else {
 			if(!algo.try_to_escape) {
 				algo.try_to_escape = true;
 				
+				Lidar lidar0 = algo.drone.lidars.get(0);
+				double forward_lidar_current_dis = lidar0.current_distance;
+				
 				Lidar lidar1 = algo.drone.lidars.get(1);
-				double a = lidar1.current_distance;
+				double right_lidar_current_dis = lidar1.current_distance;
 				
 				Lidar lidar2 = algo.drone.lidars.get(2);
-				double b = lidar2.current_distance;
+				double left_lidar_current_dis = lidar2.current_distance;		
 				
-				Lidar lidar0 = algo.drone.lidars.get(0);
-				double c = lidar0.current_distance;
-				
-				int spin_by = algo.max_angle_risky;
+				// 10 present algorithm max_angle_risky
+				int spin_by = 10;
 								
-				if(a > 270 && b > 270) {
+				// 30 meter from max lidar length
+				if(right_lidar_current_dis > 270 && left_lidar_current_dis > 270) {
 				algo.is_lidars_max = true;
 				Point l1 = Utils.getPointByDistance(dronePoint, lidar1.degrees + algo.drone.getGyroRotation(), lidar1.current_distance);
 				Point l2 = Utils.getPointByDistance(dronePoint, lidar2.degrees + algo.drone.getGyroRotation(), lidar2.current_distance);
@@ -148,40 +157,46 @@ public class Utils {
 				double dis_to_lidar2 = Utils.getDistanceBetweenPoints(last_point,l2);
 				
 				if(Simulator.return_home) {
-					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  algo.max_distance_between_points) {
+					// 100 is max_distance_between_points
+					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  100) {
 						Utils.removeLastPoint(algo);
 					}
 				} else {
-					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) >=  algo.max_distance_between_points) {
+					// 100 is max_distance_between_points
+					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) >=  100) {
 						algo.points.add(dronePoint);
 						algo.mGraph.addVertex(dronePoint);
 					}
 				}
 				
+				// 30 meter distance from the edges case
 				spin_by = 90;
 				if(Simulator.return_home) {
 					spin_by *= -1;
 				}
 				
 				if(dis_to_lidar1 < dis_to_lidar2) {
-					
 					spin_by *= (-1 ); 
 				}
 								
 				
 			} else {
-				if(a < b ) {
+				// If my left distance grater than the right one spin by oposite
+				if(right_lidar_current_dis < left_lidar_current_dis) {
 					spin_by *= (-1 ); 
 				}
 				else if(algo.risky_dis >= 100) {
 					spin_by *= (-1 ); 
+//					int risky_dis_from_algo = (int)algo.risky_dis;
+//					switch(risky_dis_from_algo) {
+//						
+//					}
 				}
 			}
 				
-			if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+			if((right_lidar_current_dis<=1 && left_lidar_current_dis<=1 && forward_lidar_current_dis<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
 				System.out.println("Game over !");
 				stopCPUS();
-//			    System.exit(0);
 			}
 			Utils.spinBy(spin_by,true, algo, new Func() { 
 					@Override
@@ -231,8 +246,8 @@ public class Utils {
 			algo.leftOrRight *= -1;
 			algo.counter++;
 			algo.is_finish = false;
-			
-			Utils.spinBy(algo.max_rotation_to_direction*algo.leftOrRight,false , algo,new Func() {
+			// 20 is algorithm max_rotation_to_direction
+			Utils.spinBy(20 * algo.leftOrRight,false , algo,new Func() {
 				@Override
 				public void method() {
 					algo.is_finish = true;

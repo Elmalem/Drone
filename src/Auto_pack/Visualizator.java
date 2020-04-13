@@ -17,6 +17,7 @@ public class Visualizator {
 	// This class only generate the visualization settings 
 	
 	public static void initialize(Simulator main) {
+		Timer.reset();
 		main.frame = new JFrame();
 		main.frame.setSize(1800,700);
 		main.frame.setTitle("Drone Simulator");

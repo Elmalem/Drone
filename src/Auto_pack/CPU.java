@@ -3,21 +3,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
 
-public class CPU{
-	public int hz ; 
-	public List<IntConsumer> functions_list;
-	private boolean isPlay;
-	private long elapsedMilli;
-	private boolean isPlayedBeforeStop;
-	public static List<CPU> all_cpus = null;
-	Thread thread;
+public class CPU {
 	
-	public CPU(int hz,String name) {
+	Thread thread;
+
+	private long elapsedMilli; // Time signer
+
+	private boolean isPlay; // Alive boolean
+	private boolean isPlayedBeforeStop;
+	
+	public List<IntConsumer> functions_list;
+	public static List<CPU> all_cpus = null;
+		
+	public CPU(String name) {
 		functions_list = new ArrayList<>();
 		isPlay = false;
 		isPlayedBeforeStop = false;
 		
-		this.hz = hz;
 		elapsedMilli = 0;
 		thread = new Thread("Eventor_" + name){
 	        public void run(){
@@ -35,6 +37,8 @@ public class CPU{
 		
 		all_cpus.add(this);
 	}
+	
+	// move it to utils - cpus functions
 	
 	public static void stopAllCPUS() {
 		for(int i=0;i<all_cpus.size();i++) {
@@ -54,11 +58,6 @@ public class CPU{
 			notify();
 		}
    }
-
-	
-	public void addFunction(IntConsumer a) {
-		functions_list.add(a);
-	}
 	
 	public void play() {
 		isPlay = true;
@@ -79,7 +78,6 @@ public class CPU{
 		this.elapsedMilli = 0;
 	}
 	
-	
 	public void thread_run() {
 		int functions_size= 0;
 		int[] last_sample_times = null;
@@ -87,8 +85,19 @@ public class CPU{
 		int i=0;
 		
 		int time_to_sleep = 2;
-		if(1000/hz > 1) {
-			time_to_sleep = 1000/hz;
+		switch(i) {
+		 case 0:
+			 // Repaint
+			 time_to_sleep = 1000 /  200;
+			 break;
+		 case 1:
+			 // Drone update
+			 time_to_sleep = 1000 /  60;
+			 break;
+		 case 2:
+			 //  Info update
+			 time_to_sleep = 1000 /  6;
+			 break;
 		}
 
 		while(true) {
@@ -112,28 +121,20 @@ public class CPU{
 		                  last_sample = System.currentTimeMillis();
 		               }
 		            }
-			} catch (InterruptedException e) {}	
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}	
 			
-		    int diff = (int)(System.currentTimeMillis()-last_sample);
-		    int before_index = getCyclic(i-1,functions_size);
+		    int diff = (int)(System.currentTimeMillis() - last_sample);
+		    int before_index = (i % functions_size) < 0 ? (functions_size + i) : i;
 		    int actual_diff = last_sample_times[before_index] + diff - last_sample_times[i];
 		    last_sample_times[i] = last_sample_times[before_index] + diff;
 		    
 		    IntConsumer curr_func = functions_list.get(i);
 		    curr_func.accept(actual_diff);
 		    elapsedMilli += actual_diff;
-		    i++;
-		    i %= functions_size;
+		    i = (i+1) % functions_size;
 		}
 	}
-	
-	private int getCyclic(int i,int size) {
-		i %= size;
-		if(i< 0) {
-			return size+i;
-		}
-		return i;
-	}
-
 
 }
