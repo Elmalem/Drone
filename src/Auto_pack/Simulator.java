@@ -44,7 +44,8 @@ public class Simulator {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Timer.reset();
+					//Timer t=new Timer();
+					//t.start();
 					Simulator simulator_ = new Simulator();
 					simulator_.frame.setVisible(true);
 				} catch (Exception e) {

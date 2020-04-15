@@ -23,14 +23,20 @@ public class Visualizator {
 		main.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.frame.getContentPane().setLayout(null);
 		
-		// Func buttons 
+		////////////////////////////
+		Timer t=new Timer();
+		////////////////////////////
 		
 		JButton stopBtn = new JButton("Pause");
 		stopBtn.addActionListener(new ActionListener()
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {					 
-				  Timer.pause();
+//				  try {
+					Timer.flag=false;
+//				} catch (InterruptedException e1) {
+//					e1.printStackTrace();
+//				}
 				  CPU.stopAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
@@ -43,7 +49,8 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Timer.resume();
+				  Timer.flag=true;
+				  
 				  CPU.resumeAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
@@ -67,7 +74,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Timer.start();
+				  t.start();
 				  Simulator.toogleAI = !Simulator.toogleAI;
 			  }
 		});

@@ -1,11 +1,16 @@
 package Auto_pack;
 import java.util.Random;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import Auto_pack.Algorithm.PixelState;
 
 // This class present most of the functionalities in the program
 
+
 public class Utils {
+
+	public static boolean gameEnd =false; 
+
 	
 	public static void updateInfo(int deltaTime , JLabel info_label , JLabel info_label2 , Algorithm algo) {
 		info_label.setText(algo.drone.getInfoHTML());
@@ -179,9 +184,11 @@ public class Utils {
 			}
 				
 			if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-				System.out.println("Game over !");
+				System.out.println(a+"  "+b+"  "+c);
+				System.out.println(" point : (" +dronePoint.x+","+dronePoint.y+")");
 				stopCPUS();
-//			    System.exit(0);
+				gameEnd=true;
+				gameOverMessage();
 			}
 			Utils.spinBy(spin_by,true, algo, new Func() { 
 					@Override
@@ -400,5 +407,11 @@ public class Utils {
 		double y1 = (from.y-to.y)*(from.y-to.y);
 		return Math.sqrt(x1+y1);	
 	}
+	
+	/////////////////////////////////////////////////////////////
+	   public static void gameOverMessage()
+	    {
+	        JOptionPane.showMessageDialog(null, "Game Over!!!");
+	    }	
 	
 }
