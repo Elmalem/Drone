@@ -1,12 +1,16 @@
 package Auto_pack;
 
+import java.time.format.DateTimeFormatter;
+
 public class Config {
+	public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");  
 	public static Point[] startPoints = {
 			new Point(100,50),
 			new Point(50,60),
 			new Point(73,68),
 			new Point(84,73),
 			new Point(92,100)};
+	public static int max_risky_distance = 150;
 	public static String imageSourcePath = "C:\\\\Users\\\\user\\\\git\\\\Matala.1";
 	public static int lidarLimit = 300; // CM
 	public static int lidarNoise = 1; //  = 3 CM

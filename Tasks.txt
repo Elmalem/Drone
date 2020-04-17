@@ -1,0 +1,1 @@
+distance from start and delta time shown constant - drone class

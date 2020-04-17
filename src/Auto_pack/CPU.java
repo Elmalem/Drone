@@ -7,18 +7,22 @@ public class CPU {
 	
 	Thread thread;
 
-	private long elapsedMilli; // Time signer
+	private static long elapsedMilli; // Time signer
 
+	private int hz;
+	
 	private boolean isPlay; // Alive boolean
 	private boolean isPlayedBeforeStop;
 	
 	public List<IntConsumer> functions_list;
 	public static List<CPU> all_cpus = null;
 		
-	public CPU(String name) {
+	public CPU(int hz , String name) {
 		functions_list = new ArrayList<>();
 		isPlay = false;
 		isPlayedBeforeStop = false;
+		
+		this.hz = hz;
 		
 		elapsedMilli = 0;
 		thread = new Thread("Eventor_" + name){
@@ -37,9 +41,7 @@ public class CPU {
 		
 		all_cpus.add(this);
 	}
-	
-	// move it to utils - cpus functions
-	
+		
 	public static void stopAllCPUS() {
 		for(int i=0;i<all_cpus.size();i++) {
 			all_cpus.get(i).isPlay = false;
@@ -70,12 +72,12 @@ public class CPU {
 		isPlayedBeforeStop = false;
 	}
 	
-	public long getElapsedMilli() {
-		return this.elapsedMilli;
+	public static long getElapsedMilli() {
+		return CPU.elapsedMilli;
 	}
 	
 	public void resetClock() {
-		this.elapsedMilli = 0;
+		CPU.elapsedMilli = 0;
 	}
 	
 	public void thread_run() {
@@ -85,23 +87,11 @@ public class CPU {
 		int i=0;
 		
 		int time_to_sleep = 2;
-		switch(i) {
-		 case 0:
-			 // Repaint
-			 time_to_sleep = 1000 /  200;
-			 break;
-		 case 1:
-			 // Drone update
-			 time_to_sleep = 1000 /  60;
-			 break;
-		 case 2:
-			 //  Info update
-			 time_to_sleep = 1000 /  6;
-			 break;
+		if(1000/hz > 1) {
+			time_to_sleep = 1000/hz;
 		}
 
 		while(true) {
-			
 			if(functions_size != functions_list.size()) {
 				functions_size = functions_list.size();
 				last_sample_times = new int[functions_size];
@@ -134,6 +124,7 @@ public class CPU {
 		    curr_func.accept(actual_diff);
 		    elapsedMilli += actual_diff;
 		    i = (i+1) % functions_size;
+		    
 		}
 	}
 

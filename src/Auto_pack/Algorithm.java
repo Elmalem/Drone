@@ -16,14 +16,14 @@ public class Algorithm {
 		drone.addLidar(-90);
 		Utils.initMap(this);		
 		isRotating = 0;
-		ai_cpu = new CPU("Algorithm cpu - AI");
+		ai_cpu = new CPU(200,"Algorithm cpu - AI");
 		ai_cpu.functions_list.add(this::update);
 	}
 	
 	public void update(int deltaTime) {
 		Utils.updateForAlgo(deltaTime , this);
 	}
-	
+
 	// Class configuration  by types
 		
 	int map_size = 3000;
@@ -57,7 +57,7 @@ public class Algorithm {
 	ArrayList<Func> degrees_left_func;
 	
 	PixelState map[][];
-	
+			
 	Drone drone;
 	
 	Graph mGraph;

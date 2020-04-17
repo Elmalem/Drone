@@ -26,7 +26,7 @@ public class Drone {
 		speed = 0.2;	
 		rotation = 0;
 		gyroRotation = rotation;	
-		cpu = new CPU("Drone");
+		cpu = new CPU(100 , "Drone");
 	}
 	
 	public void play() {

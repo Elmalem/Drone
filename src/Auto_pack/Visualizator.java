@@ -4,20 +4,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class Visualizator {
-	
+public class Visualizator{
+
 	final static ArrayList<Integer> ButtonHeights = new ArrayList<Integer>(Arrays.asList(0 , 30 , 60 , 90 , 120 , 150 , 180 , 210));
 	final static ArrayList<Integer> ButtonWeights = new ArrayList<Integer>(Arrays.asList(1400 , 1512 , 1624));
-
 	// This class only generate the visualization settings 
 	
+	
 	public static void initialize(Simulator main) {
-		Timer.reset();
 		main.frame = new JFrame();
 		main.frame.setSize(1800,700);
 		main.frame.setTitle("Drone Simulator");
@@ -31,7 +29,6 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {					 
-				  Timer.pause();
 				  CPU.stopAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
@@ -42,9 +39,7 @@ public class Visualizator {
 		JButton resumeBtn = new JButton("Resume");
 		resumeBtn.addActionListener(new ActionListener()
 		{
-			  public void actionPerformed(ActionEvent e)
-			  {
-				  Timer.resume();
+			  public void actionPerformed(ActionEvent e)  {
 				  CPU.resumeAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
@@ -64,14 +59,13 @@ public class Visualizator {
 		main.frame.getContentPane().add(toogleMapBtn);
 		
 		JButton toogleAIBtn = new JButton("Toogle AI");
-		toogleAIBtn.addActionListener(new ActionListener()
-		{
+		ActionListener al = new ActionListener(){
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Timer.start();
 				  Simulator.toogleAI = !Simulator.toogleAI;
 			  }
-		});
+		};
+		toogleAIBtn.addActionListener(al);
 		toogleAIBtn.setBounds(1512, 300, 150, 50);
 		main.frame.getContentPane().add(toogleAIBtn);
 
@@ -212,5 +206,12 @@ public class Visualizator {
 		Simulator.info_label_config = new JLabel();
 		Simulator.info_label_config.setBounds(1450, 400, 300, 200);
 		main.frame.getContentPane().add(Simulator.info_label_config);
+		
+		Simulator.info_time = new JLabel();
+		Simulator.info_time.setBounds(1450, 350, 300, 200);
+		main.frame.getContentPane().add(Simulator.info_time);
+		
+		// al present action listener to toggle ai button to start the timer with is constructor
 	}
+
 }
