@@ -19,8 +19,8 @@ public class Config {
 	public static final int lidarLimit = 300; // in cm
 	public static final int lidarNoise = 1; // in cm 3
 	public static final int CMPerPixel = 5;
-	public static final double accelerate_per_second = 1; // 1 meter per second
-	public static final double max_speed = 0.5; // 1 meter per second
+	public static final double accelerate_per_second = 1; // 1 is one meter per second
+	public static final double max_speed = 0.5; // 0.5 is one meter per second
 	public static final double rotation_per_second = 60; // whole round per second
 	public static final int min_motion_accuracy = 0; // 2
 	public static final int max_motion_accuracy = 1; // 5

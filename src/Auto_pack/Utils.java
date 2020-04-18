@@ -116,16 +116,14 @@ public class Utils {
 			}
 		}
 		
-		int spin_by = Config.max_angle_risky;
+		GameVariabales.spin_by = Config.max_angle_risky;
 		
 		if(!GameVariabales.is_risky) {
-			if((GameVariabales.drone.lidars.get(1).current_distance < 3 && GameVariabales.drone.lidars.get(2).current_distance < 3 && GameVariabales.drone.lidars.get(0).current_distance < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-				spin_by *= -1;
-			}
-			Lidar lidar = GameVariabales.drone.lidars.get(0);
-			if(lidar.current_distance <= Config.max_risky_distance ) {
+		
+			Lidar lidar0 = GameVariabales.drone.lidars.get(0);
+			if(lidar0.current_distance <= Config.max_risky_distance ) {
 				GameVariabales.is_risky = true;
-				GameVariabales.risky_dis = lidar.current_distance;				
+				GameVariabales.risky_dis = lidar0.current_distance;				
 			}
 			
 			Lidar lidar1 = GameVariabales.drone.lidars.get(1);
@@ -137,6 +135,7 @@ public class Utils {
 			if(lidar2.current_distance <= Config.max_risky_distance/3 ) {
 				GameVariabales.is_risky = true;
 			}
+
 			
 		} else {
 			if(!GameVariabales.try_to_escape) {
@@ -151,15 +150,8 @@ public class Utils {
 				
 				Lidar lidar0 = GameVariabales.drone.lidars.get(0);
 				double c = lidar0.current_distance;
-				if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-					spin_by *= -1;
-				}	
 								
-				if(a > 270 && b > 270) {
-					
-					if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-						spin_by *= -1;
-					}	
+				if(a > 270 && b > 270) {	
 				GameVariabales.is_lidars_max = true;
 				Point l1 = Utils.getPointByDistance(dronePoint, lidar1.degrees + GameVariabales.drone.getGyroRotation(), lidar1.current_distance);
 				Point l2 = Utils.getPointByDistance(dronePoint, lidar2.degrees + GameVariabales.drone.getGyroRotation(), lidar2.current_distance);
@@ -178,33 +170,24 @@ public class Utils {
 					}
 				}
 				
-				spin_by = 90;
-		
+				GameVariabales.spin_by = 90;
+				
 				if(Simulator.return_home || dis_to_lidar1 < dis_to_lidar2) {
-					spin_by *= -1;
+					GameVariabales.spin_by *= -1;
 				}
 				
-			} else {
-				
-				if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-					spin_by *= -1;
-				}	
-				
+			} else {				
 				if(a < b || GameVariabales.risky_dis >= 100) {
-					spin_by *= (-1 ); 
+					GameVariabales.spin_by *= (-1 ); 
 				}
 			}
-				
-			if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-					spin_by *= -1;
-			}	
 				
 			if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
 				stopCPUS();
 				GameVariabales.gameEnd=true;
 				gameOverMessage();
 			}
-			Utils.spinBy(spin_by,true, new Func() { 
+			Utils.spinBy(GameVariabales.spin_by,true, new Func() { 
 					@Override
 					public void method() {
 						GameVariabales.try_to_escape = false;
@@ -215,12 +198,17 @@ public class Utils {
 	}
 	}
 	
+	public static void unbroken(int deltaTime , double a , double b , double c , Point dronePoint , int spin_by) {
+		if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+			GameVariabales.drone.slowDown(deltaTime);
+			spin_by *= -1;
+		}	
+	}
+	
 	public static void gameUpdates(int deltaTime) {
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
-		
 		Utils.ai(deltaTime);
-		
 		if(GameVariabales.isRotating != 0) {
 			Utils.updateRotating(deltaTime);
 		}

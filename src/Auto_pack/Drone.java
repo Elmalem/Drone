@@ -117,7 +117,6 @@ public class Drone {
 		}
 	}
 	
-	
 	boolean initPaint = false;
 	BufferedImage mImage;
 	int j=0;

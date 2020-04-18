@@ -29,6 +29,7 @@ public class GameVariabales {
 	public static Point droneStartingPoint;
 	public static ArrayList<Point> points;
 	public static int isRotating;
+	public static int spin_by;
 	public static ArrayList<Double> degrees_left;
 	public static ArrayList<Func> degrees_left_func;
 	public static boolean isSpeedUp = false;
