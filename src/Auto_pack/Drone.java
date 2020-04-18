@@ -12,14 +12,12 @@ public class Drone {
 	public Point startPoint;
 	public List<Lidar> lidars;
 	public String drone_img_path = Config.imageSourcePath + "\\Maps\\drone_3_pixels.png";
-	public Map realMap;
 	private double rotation;
 	private double speed;
 	private CPU cpu;
 	
-	public Drone(Map realMap) {
-		this.realMap = realMap;
-		this.startPoint = realMap.drone_start_point;
+	public Drone() {
+		this.startPoint = GameVariabales.realMap.drone_start_point;
 		pointFromStart = new Point();
 		sensorOpticalFlow = new Point();
 		lidars = new ArrayList<>();

@@ -75,7 +75,7 @@ public class Painter extends JComponent {
 	
 	public static void paintForAlgo(Graphics g , Point droneStartingPoint , ArrayList<Point> points, Drone drone , int map_size , GameVariabales.PixelState[][] map) {
 		if(Simulator.toogleRealMap) {
-			Painter.paintMap(g , drone.realMap);
+			Painter.paintMap(g , GameVariabales.realMap);
 		}	
 		Painter.paintBlindMap(g , droneStartingPoint , drone , map_size , map);
 		for(int i=0;i<points.size();i++) {
@@ -89,7 +89,7 @@ public class Painter extends JComponent {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Painter.paintForAlgo(g , GameVariabales.droneStartingPoint , GameVariabales.points ,  GameVariabales.drone , GameVariabales.map_size , GameVariabales.map);
+		Painter.paintForAlgo(g , GameVariabales.droneStartingPoint , GameVariabales.points ,  GameVariabales.drone , Config.map_size , GameVariabales.map);
 	
 	}
 }

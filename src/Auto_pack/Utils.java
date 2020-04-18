@@ -4,7 +4,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 public class Utils {
-
 	
 	public static void updateInfo(int deltaTime , JLabel info_label , JLabel info_label2) {
 		info_label.setText(GameVariabales.drone.getInfoHTML());
@@ -78,7 +77,7 @@ public class Utils {
 		if(!Simulator.toogleAI) {
 			return;
 		}
-	
+			
 		if(GameVariabales.is_init) {
 			Utils.speedUp();
 			Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
@@ -90,41 +89,50 @@ public class Utils {
 		
 		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
 
-		if(Simulator.return_home) {
-			
-			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  GameVariabales.max_distance_between_points) {
-				if(GameVariabales.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  GameVariabales.max_distance_between_points/5) {
+		if(Simulator.return_home) {		
+			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  Config.max_distance_between_points) {
+				if(GameVariabales.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  Config.max_distance_between_points/5) {
 					Utils.speedDown();
 				} else {
 					Utils.removeLastPoint();
 				}
 			}
 		} else {
-			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) >=  GameVariabales.max_distance_between_points) {
+			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) >=  Config.max_distance_between_points) {
 				GameVariabales.points.add(dronePoint);
 				GameVariabales.mGraph.addVertex(dronePoint);
 			}
 		}
 		
+		int spin_by = Config.max_angle_risky;
+		
 		if(!GameVariabales.is_risky) {
+			if((GameVariabales.drone.lidars.get(1).current_distance <= 1 && GameVariabales.drone.lidars.get(2).current_distance<=1 && GameVariabales.drone.lidars.get(0).current_distance<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+				spin_by *= -1;
+			}
 			Lidar lidar = GameVariabales.drone.lidars.get(0);
-			if(lidar.current_distance <= GameVariabales.max_risky_distance ) {
+			if(lidar.current_distance <= Config.max_risky_distance ) {
 				GameVariabales.is_risky = true;
 				GameVariabales.risky_dis = lidar.current_distance;				
 			}
 			
 			Lidar lidar1 = GameVariabales.drone.lidars.get(1);
-			if(lidar1.current_distance <= GameVariabales.max_risky_distance/3 ) {
+			if(lidar1.current_distance <= Config.max_risky_distance/3 ) {
 				GameVariabales.is_risky = true;
 			}
 			
 			Lidar lidar2 = GameVariabales.drone.lidars.get(2);
-			if(lidar2.current_distance <= GameVariabales.max_risky_distance/3 ) {
+			if(lidar2.current_distance <= Config.max_risky_distance/3 ) {
 				GameVariabales.is_risky = true;
 			}
 			
 		} else {
 			if(!GameVariabales.try_to_escape) {
+				
+				if((GameVariabales.drone.lidars.get(1).current_distance <= 1 && GameVariabales.drone.lidars.get(2).current_distance<=1 && GameVariabales.drone.lidars.get(0).current_distance<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+					spin_by *= -1;
+				}
+				
 				GameVariabales.try_to_escape = true;
 				
 				Lidar lidar1 = GameVariabales.drone.lidars.get(1);
@@ -135,8 +143,6 @@ public class Utils {
 				
 				Lidar lidar0 = GameVariabales.drone.lidars.get(0);
 				double c = lidar0.current_distance;
-				
-				int spin_by = GameVariabales.max_angle_risky;
 								
 				if(a > 270 && b > 270) {
 				GameVariabales.is_lidars_max = true;
@@ -147,32 +153,29 @@ public class Utils {
 				double dis_to_lidar2 = Utils.getDistanceBetweenPoints(last_point,l2);
 				
 				if(Simulator.return_home) {
-					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  GameVariabales.max_distance_between_points) {
+					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  Config.max_distance_between_points) {
 						Utils.removeLastPoint();
 					}
 				} else {
-					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) >=  GameVariabales.max_distance_between_points) {
+					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) >=  Config.max_distance_between_points) {
 						GameVariabales.points.add(dronePoint);
 						GameVariabales.mGraph.addVertex(dronePoint);
 					}
 				}
 				
 				spin_by = 90;
-				if(Simulator.return_home) {
+		
+				if(Simulator.return_home || dis_to_lidar1 < dis_to_lidar2) {
 					spin_by *= -1;
 				}
 				
-				if(dis_to_lidar1 < dis_to_lidar2) {
-					
-					spin_by *= (-1 ); 
-				}
-								
-				
 			} else {
-				if(a < b ) {
-					spin_by *= (-1 ); 
+				
+				if((GameVariabales.drone.lidars.get(1).current_distance <= 1 && GameVariabales.drone.lidars.get(2).current_distance<=1 && GameVariabales.drone.lidars.get(0).current_distance<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+					spin_by *= -1;
 				}
-				else if(GameVariabales.risky_dis >= 100) {
+				
+				if(a < b || GameVariabales.risky_dis >= 100) {
 					spin_by *= (-1 ); 
 				}
 			}
@@ -193,12 +196,11 @@ public class Utils {
 	}
 	}
 	
-	public static void updateForAlgo(int deltaTime , GameVariabales vars) {
+	public static void updateForAlgo(int deltaTime) {
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
 		
 		Utils.ai(deltaTime);
-		
 		
 		if(GameVariabales.isRotating != 0) {
 			Utils.updateRotating(deltaTime);
@@ -214,14 +216,14 @@ public class Utils {
 	
 	
 	public static void initMap() {
-		GameVariabales.map = new GameVariabales.PixelState[GameVariabales.map_size][GameVariabales.map_size];
-		for(int i=0;i<GameVariabales.map_size;i++) {
-			for(int j=0;j<GameVariabales.map_size;j++) {
+		GameVariabales.map = new GameVariabales.PixelState[Config.map_size][Config.map_size];
+		for(int i=0;i<Config.map_size;i++) {
+			for(int j=0;j<Config.map_size;j++) {
 				GameVariabales.map[i][j] = GameVariabales.PixelState.unexplored;
 			}
 		}
 		
-		GameVariabales.droneStartingPoint = new Point(GameVariabales.map_size/2,GameVariabales.map_size/2);
+		GameVariabales.droneStartingPoint = new Point(Config.map_size/2,Config.map_size/2);
 	}
 	
 	// Unused
@@ -231,7 +233,7 @@ public class Utils {
 			GameVariabales.counter++;
 			GameVariabales.is_finish = false;
 			
-			Utils.spinBy(GameVariabales.max_rotation_to_direction*GameVariabales.leftOrRight,false,new Func() {
+			Utils.spinBy(Config.max_rotation_to_direction*GameVariabales.leftOrRight,false,new Func() {
 				@Override
 				public void method() {
 					GameVariabales.is_finish = true;
@@ -302,8 +304,6 @@ public class Utils {
 			}
 		}
 		
-	
-		 
 		GameVariabales.lastGyroRotation = curr;
 		degrees_left_to_rotate-=just_rotated;
 		GameVariabales.degrees_left.remove(0);
@@ -400,7 +400,16 @@ public class Utils {
 	/////////////////////////////////////////////////////////////
 	   public static void gameOverMessage()
 	    {
-	        JOptionPane.showMessageDialog(null, "Game Over!!!");
+		   Point p = GameVariabales.drone.getOpticalSensorLocation();
+		   Lidar lidar1 = GameVariabales.drone.lidars.get(1);
+			double a = lidar1.current_distance;
+			
+			Lidar lidar2 = GameVariabales.drone.lidars.get(2);
+			double b = lidar2.current_distance;
+			
+			Lidar lidar0 = GameVariabales.drone.lidars.get(0);
+			double c = lidar0.current_distance;
+	        JOptionPane.showMessageDialog(null, "Game Over!!!" + "\n(" + p.x + "," + p.y +")\n right : " + a + " left : " + b + " center : " + c);
 	    }	
 	
 }

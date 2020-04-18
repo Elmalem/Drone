@@ -1,7 +1,7 @@
 package Auto_pack;
 import java.util.Random;
 
-public class Lidar{
+public class Lidar {
 	Drone drone;
 	double degrees;
 	double current_distance = 0;
@@ -18,7 +18,7 @@ public class Lidar{
 		double distanceInCM=1;
 		while(distanceInCM <= Config.lidarLimit) { 
 			Point p = Utils.getPointByDistance(actualPointToShoot, rotation, distanceInCM);
-			if(drone.realMap.isCollide((int)p.x,(int)p.y)) {
+			if(GameVariabales.realMap.isCollide((int)p.x,(int)p.y)) {
 				break;
 			}
 			distanceInCM++;
