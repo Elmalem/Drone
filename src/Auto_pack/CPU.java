@@ -3,13 +3,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
 
-public class CPU{
-	public int hz ; 
+public class CPU {
+	public int hz; 
 	public List<IntConsumer> functions_list;
-	private boolean isPlay;
+	public boolean isPlay;
 	private long elapsedMilli;
 	private boolean isPlayedBeforeStop;
-	public static List<CPU> all_cpus = null;
 	Thread thread;
 	
 	public CPU(int hz,String name) {
@@ -29,23 +28,11 @@ public class CPU{
 	      };
         thread.start();
 
-		if(all_cpus == null) {
-			all_cpus = new ArrayList<>();
+		if(GameVariabales.all_cpus == null) {
+			GameVariabales.all_cpus = new ArrayList<>();
 		}
 		
-		all_cpus.add(this);
-	}
-	
-	public static void stopAllCPUS() {
-		for(int i=0;i<all_cpus.size();i++) {
-			all_cpus.get(i).isPlay = false;
-		}
-	}
-	
-	public static void resumeAllCPUS() {
-		for(int i=0; i<all_cpus.size(); i++) {
-			all_cpus.get(i).resume();
-		}
+		GameVariabales.all_cpus.add(this);
 	}
 	
 	synchronized void resume() {

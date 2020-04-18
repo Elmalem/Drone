@@ -29,7 +29,7 @@ public class Visualizator {
 			  public void actionPerformed(ActionEvent e)
 			  {					 
 				  Timer.flag=false;
-				  CPU.stopAllCPUS();
+				  Utils.stopAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
 		});
@@ -42,7 +42,7 @@ public class Visualizator {
 			  public void actionPerformed(ActionEvent e)
 			  {
 				  Timer.flag=true;
-				  CPU.resumeAllCPUS();
+				  Utils.resumeAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
 		});

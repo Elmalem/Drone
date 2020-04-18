@@ -8,13 +8,14 @@ public class Config {
 			new Point(84,73),
 			new Point(92,100)};
 	
+	public static final String drone_img_path = Config.imageSourcePath + "\\Maps\\drone_3_pixels.png";
 	public static final double max_distance_between_points = 100;
 	public static final double save_point_after_seconds = 3;
 	public static final int max_angle_risky = 10;
 	public static final int max_risky_distance = 150;
 	public static final double max_rotation_to_direction = 20;
 	public static final int map_size = 3000;
-	public static final String imageSourcePath = "C:\\\\Users\\\\user\\\\git\\\\Drone";	//Snir
+	public static final String imageSourcePath = "C:\\\\Users\\\\user\\\\git\\\\Drone";	
 	public static final int lidarLimit = 300; // in cm
 	public static final int lidarNoise = 1; // in cm 3
 	public static final int CMPerPixel = 5;

@@ -14,7 +14,7 @@ public class Painter extends JComponent {
 	public static void paintDrone(Graphics g , Drone drone) {
 		if(!drone.initPaint) {
 			try {
-				File f = new File(drone.drone_img_path);
+				File f = new File(Config.drone_img_path);
 				drone.mImage = ImageIO.read(f);
 				drone.initPaint = true;
 			} catch(Exception ex) {

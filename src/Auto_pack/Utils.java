@@ -5,6 +5,18 @@ import javax.swing.JOptionPane;
 
 public class Utils {
 	
+	public static void stopAllCPUS() {
+		for(int i=0;i<GameVariabales.all_cpus.size();i++) {
+			GameVariabales.all_cpus.get(i).isPlay = false;
+		}
+	}
+	
+	public static void resumeAllCPUS() {
+		for(int i=0; i<GameVariabales.all_cpus.size(); i++) {
+			GameVariabales.all_cpus.get(i).resume();
+		}
+	}
+	
 	public static void updateInfo(int deltaTime , JLabel info_label , JLabel info_label2) {
 		info_label.setText(GameVariabales.drone.getInfoHTML());
 		info_label2.setText("<html>" + String.valueOf(GameVariabales.counter) + " <BR>isRisky:" + String.valueOf(GameVariabales.is_risky) + 
@@ -12,11 +24,11 @@ public class Utils {
 	}
 
 	public static void stopCPUS() {
-		CPU.stopAllCPUS();
+		Utils.stopAllCPUS();
 	}
 	
 	public static void resumseCPUS() {
-		CPU.resumeAllCPUS();
+		Utils.resumeAllCPUS();
 	}
 	
 	public static void play() {
@@ -107,7 +119,7 @@ public class Utils {
 		int spin_by = Config.max_angle_risky;
 		
 		if(!GameVariabales.is_risky) {
-			if((GameVariabales.drone.lidars.get(1).current_distance <= 1 && GameVariabales.drone.lidars.get(2).current_distance<=1 && GameVariabales.drone.lidars.get(0).current_distance<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+			if((GameVariabales.drone.lidars.get(1).current_distance < 3 && GameVariabales.drone.lidars.get(2).current_distance < 3 && GameVariabales.drone.lidars.get(0).current_distance < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
 				spin_by *= -1;
 			}
 			Lidar lidar = GameVariabales.drone.lidars.get(0);
@@ -129,10 +141,6 @@ public class Utils {
 		} else {
 			if(!GameVariabales.try_to_escape) {
 				
-				if((GameVariabales.drone.lidars.get(1).current_distance <= 1 && GameVariabales.drone.lidars.get(2).current_distance<=1 && GameVariabales.drone.lidars.get(0).current_distance<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-					spin_by *= -1;
-				}
-				
 				GameVariabales.try_to_escape = true;
 				
 				Lidar lidar1 = GameVariabales.drone.lidars.get(1);
@@ -143,8 +151,15 @@ public class Utils {
 				
 				Lidar lidar0 = GameVariabales.drone.lidars.get(0);
 				double c = lidar0.current_distance;
+				if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+					spin_by *= -1;
+				}	
 								
 				if(a > 270 && b > 270) {
+					
+					if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+						spin_by *= -1;
+					}	
 				GameVariabales.is_lidars_max = true;
 				Point l1 = Utils.getPointByDistance(dronePoint, lidar1.degrees + GameVariabales.drone.getGyroRotation(), lidar1.current_distance);
 				Point l2 = Utils.getPointByDistance(dronePoint, lidar2.degrees + GameVariabales.drone.getGyroRotation(), lidar2.current_distance);
@@ -171,14 +186,18 @@ public class Utils {
 				
 			} else {
 				
-				if((GameVariabales.drone.lidars.get(1).current_distance <= 1 && GameVariabales.drone.lidars.get(2).current_distance<=1 && GameVariabales.drone.lidars.get(0).current_distance<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+				if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
 					spin_by *= -1;
-				}
+				}	
 				
 				if(a < b || GameVariabales.risky_dis >= 100) {
 					spin_by *= (-1 ); 
 				}
 			}
+				
+			if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+					spin_by *= -1;
+			}	
 				
 			if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
 				stopCPUS();
@@ -196,7 +215,7 @@ public class Utils {
 	}
 	}
 	
-	public static void updateForAlgo(int deltaTime) {
+	public static void gameUpdates(int deltaTime) {
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
 		
@@ -409,6 +428,7 @@ public class Utils {
 			
 			Lidar lidar0 = GameVariabales.drone.lidars.get(0);
 			double c = lidar0.current_distance;
+			
 	        JOptionPane.showMessageDialog(null, "Game Over!!!" + "\n(" + p.x + "," + p.y +")\n right : " + a + " left : " + b + " center : " + c);
 	    }	
 	

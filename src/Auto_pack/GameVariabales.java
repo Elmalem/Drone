@@ -1,5 +1,6 @@
 package Auto_pack;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameVariabales {
 	
@@ -21,6 +22,7 @@ public class GameVariabales {
 		Utils.initMap();		
 	}
 	
+	public static List<CPU> all_cpus = null;
 	public static Map realMap;
 	public static PixelState map[][];
 	public static Drone drone; 
@@ -52,6 +54,6 @@ public class GameVariabales {
 	public static double lastGyroRotation = 0;
 
 	public static void update(int deltaTime) {
-		Utils.updateForAlgo(deltaTime);
+		Utils.gameUpdates(deltaTime);
 	}
 }
