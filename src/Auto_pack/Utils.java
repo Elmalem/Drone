@@ -152,6 +152,7 @@ public class Utils {
 				double c = lidar0.current_distance;
 								
 				if(a > 270 && b > 270) {	
+					
 				GameVariabales.is_lidars_max = true;
 				Point l1 = Utils.getPointByDistance(dronePoint, lidar1.degrees + GameVariabales.drone.getGyroRotation(), lidar1.current_distance);
 				Point l2 = Utils.getPointByDistance(dronePoint, lidar2.degrees + GameVariabales.drone.getGyroRotation(), lidar2.current_distance);
@@ -183,9 +184,12 @@ public class Utils {
 			}
 				
 			if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
+				System.out.println("a " + a + " b " + b + " c " + c);
+				System.out.println("Drone location x " + dronePoint.x + " y " + dronePoint.y);
 				stopCPUS();
 				GameVariabales.gameEnd=true;
 				gameOverMessage();
+				System.exit(0);
 			}
 			Utils.spinBy(GameVariabales.spin_by,true, new Func() { 
 					@Override
@@ -198,10 +202,10 @@ public class Utils {
 	}
 	}
 	
-	public static void unbroken(int deltaTime , double a , double b , double c , Point dronePoint , int spin_by) {
-		if((a < 3 && b < 3 && c < 3) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-			GameVariabales.drone.slowDown(deltaTime);
-			spin_by *= -1;
+	public static void unbroken(int deltaTime , double a , double b , double c) {
+		while (((a < 1 && b < 1 && c < 1) && (!GameVariabales.is_init))) {
+			GameVariabales.spin_by = -1;
+			Utils.spinBy(GameVariabales.spin_by);
 		}	
 	}
 	
@@ -209,6 +213,7 @@ public class Utils {
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
 		Utils.ai(deltaTime);
+		
 		if(GameVariabales.isRotating != 0) {
 			Utils.updateRotating(deltaTime);
 		}
@@ -391,8 +396,7 @@ public class Utils {
 	public static Point getAvgLastPoint() {
 		if(GameVariabales.points.size() < 2) {
 			return GameVariabales.init_point;
-		}
-		
+		}	
 		Point p1 = GameVariabales.points.get(GameVariabales.points.size()-1);
 		Point p2 = GameVariabales.points.get(GameVariabales.points.size()-2);
 		return new Point((p1.x + p2.x) /2, (p1.y + p2.y) /2);
@@ -407,17 +411,7 @@ public class Utils {
 	/////////////////////////////////////////////////////////////
 	   public static void gameOverMessage()
 	    {
-		   Point p = GameVariabales.drone.getOpticalSensorLocation();
-		   Lidar lidar1 = GameVariabales.drone.lidars.get(1);
-			double a = lidar1.current_distance;
-			
-			Lidar lidar2 = GameVariabales.drone.lidars.get(2);
-			double b = lidar2.current_distance;
-			
-			Lidar lidar0 = GameVariabales.drone.lidars.get(0);
-			double c = lidar0.current_distance;
-			
-	        JOptionPane.showMessageDialog(null, "Game Over!!!" + "\n(" + p.x + "," + p.y +")\n right : " + a + " left : " + b + " center : " + c);
+	        JOptionPane.showMessageDialog(null, "Game Over!!!");
 	    }	
 	
 }
