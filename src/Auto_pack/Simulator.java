@@ -58,7 +58,7 @@ public class Simulator {
 			}
 		});
 	}
-	
+
 	public void updateInfo(int deltaTime) {
 		Utils.updateInfo(deltaTime , info_label_drone , info_label_config);
 	}

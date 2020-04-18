@@ -180,8 +180,12 @@ public class Utils {
 					GameVariabales.spin_by *= -1;
 				}
 				
-			} else {				
-				if(a < b || GameVariabales.risky_dis >= 100) {
+			} else {		
+				if (((a <= 1 && b <= 1 && c <= 1)) && (!GameVariabales.is_init)) {
+					GameVariabales.spin_by *= -1;
+					spinBy(GameVariabales.spin_by);
+				}	
+				else if(a < b || GameVariabales.risky_dis >= 100) {
 					GameVariabales.spin_by *= (-1 ); 
 				}
 			}
@@ -205,8 +209,9 @@ public class Utils {
 	}
 	
 	public static void unbroken(int deltaTime , double a , double b , double c) {
-		if (((a <= 1.5 && b <= 1.5 && c <= 1.5)) && (GameVariabales.drone.getPointOnMap().x != GameVariabales.init_point.x && GameVariabales.drone.getPointOnMap().y != GameVariabales.init_point.y)) {
+		if (((a <= 1 && b <= 1 && c <= 1)) && (!GameVariabales.is_init)) {
 			GameVariabales.spin_by *= -1;
+			spinBy(GameVariabales.spin_by);
 		}	
 	} 
 	
@@ -219,6 +224,7 @@ public class Utils {
 	public static void gameUpdates(int deltaTime) {
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
+
 		Utils.ai(deltaTime);
 		if(GameVariabales.isSpeedUp) {
 			GameVariabales.drone.speedUp(deltaTime);
@@ -296,9 +302,9 @@ public class Utils {
 		if(GameVariabales.degrees_left.size() == 0) {
 			return;
 		}
-				
+		
 		double degrees_left_to_rotate = GameVariabales.degrees_left.get(0);
-
+		
 		boolean isLeft = true;
 		if(degrees_left_to_rotate > 0) {
 			isLeft = false;
