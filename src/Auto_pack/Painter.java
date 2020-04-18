@@ -4,16 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
-import Auto_pack.Algorithm.PixelState;
 
 public class Painter extends JComponent {
 	
 	private static final long serialVersionUID = 5899668374057151639L;
-	Algorithm algo;
 	
-	public Painter(Algorithm algo) {
-		this.algo = algo;
-	}
+	public Painter() {}
 	
 	public static void paintDrone(Graphics g , Drone drone) {
 		if(!drone.initPaint) {
@@ -52,7 +48,7 @@ public class Painter extends JComponent {
 		g.setColor(c);
 	}
 	
-	public static void paintBlindMap(Graphics g , Point droneStartingPoint , Drone drone ,  int map_size , PixelState[][] map) {
+	public static void paintBlindMap(Graphics g , Point droneStartingPoint , Drone drone ,  int map_size , GameVariabales.PixelState[][] map) {
 		Color c = g.getColor();
 		int i = (int)droneStartingPoint.y - (int)drone.startPoint.x;
 		int startY = i;
@@ -60,14 +56,14 @@ public class Painter extends JComponent {
 			int j = (int)droneStartingPoint.x - (int)drone.startPoint.y;
 			int startX = j;
 			for(;j<map_size;j++) {
-				if(map[i][j] != PixelState.unexplored)  {
-					if(map[i][j] == PixelState.blocked) {
+				if(map[i][j] != GameVariabales.PixelState.unexplored)  {
+					if(map[i][j] == GameVariabales.PixelState.blocked) {
 						g.setColor(Color.RED);
 					} 
-					else if(map[i][j] == PixelState.explored) {
+					else if(map[i][j] == GameVariabales.PixelState.explored) {
 						g.setColor(Color.YELLOW);
 					}
-					else if(map[i][j] == PixelState.visited) {
+					else if(map[i][j] == GameVariabales.PixelState.visited) {
 						g.setColor(Color.BLUE);
 					}
 					g.drawLine(i-startY, j-startX, i-startY, j-startX);
@@ -77,7 +73,7 @@ public class Painter extends JComponent {
 		g.setColor(c);
 	}
 	
-	public static void paintForAlgo(Graphics g , Point droneStartingPoint , ArrayList<Point> points, Drone drone , int map_size , PixelState[][] map) {
+	public static void paintForAlgo(Graphics g , Point droneStartingPoint , ArrayList<Point> points, Drone drone , int map_size , GameVariabales.PixelState[][] map) {
 		if(Simulator.toogleRealMap) {
 			Painter.paintMap(g , drone.realMap);
 		}	
@@ -93,7 +89,7 @@ public class Painter extends JComponent {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Painter.paintForAlgo(g , algo.droneStartingPoint , algo.points ,  algo.drone , algo.map_size , algo.map);
+		Painter.paintForAlgo(g , GameVariabales.droneStartingPoint , GameVariabales.points ,  GameVariabales.drone , GameVariabales.map_size , GameVariabales.map);
 	
 	}
 }

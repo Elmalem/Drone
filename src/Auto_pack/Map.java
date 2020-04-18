@@ -26,7 +26,7 @@ public class Map{
 		boolean[][] map = new boolean[w][h];
 		for(int y=0;y<h;y++) {
 			for(int x=0;x<w;x++) {
-				int clr = map_img.getRGB(x, y);
+			 	int clr = map_img.getRGB(x, y);
 				int red = (clr & 0x00ff0000) >> 16;
 			    int green = (clr & 0x0000ff00) >> 8;
 			    int blue = clr & 0x000000ff;
@@ -34,13 +34,11 @@ public class Map{
 					map[x][y] = true;
 				}
 			}
-		}
-		
+		}	
 		return map;
 	}
 	
 	boolean isCollide(int x,int y) {
-		
 		return !map[x][y];
 	}
 

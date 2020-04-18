@@ -2,20 +2,14 @@ package Auto_pack;
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import Auto_pack.Algorithm.PixelState;
-
-// This class present most of the functionalities in the program
-
 
 public class Utils {
 
-	public static boolean gameEnd =false; 
-
 	
-	public static void updateInfo(int deltaTime , JLabel info_label , JLabel info_label2 , Algorithm algo) {
-		info_label.setText(algo.drone.getInfoHTML());
-		info_label2.setText("<html>" + String.valueOf(algo.counter) + " <BR>isRisky:" + String.valueOf(algo.is_risky) + 
-				"<BR>" + String.valueOf(algo.risky_dis) +  "<BR> Time : " + String.valueOf(Timer.getTimeBySeconds()) + "</html>");
+	public static void updateInfo(int deltaTime , JLabel info_label , JLabel info_label2) {
+		info_label.setText(GameVariabales.drone.getInfoHTML());
+		info_label2.setText("<html>" + String.valueOf(GameVariabales.counter) + " <BR>isRisky:" + String.valueOf(GameVariabales.is_risky) + 
+				"<BR>" + String.valueOf(GameVariabales.risky_dis) +  "<BR> Time : " + String.valueOf(Timer.getTimeBySeconds()) + "</html>");
 	}
 
 	public static void stopCPUS() {
@@ -26,9 +20,9 @@ public class Utils {
 		CPU.resumeAllCPUS();
 	}
 	
-	public static void play(Algorithm algo) {
-		algo.drone.play();
-		algo.ai_cpu.play();
+	public static void play() {
+		GameVariabales.drone.play();
+		GameVariabales.ai_cpu.play();
 	}
 
 	// CM sign
@@ -58,16 +52,16 @@ public class Utils {
 		
 	}
 	
-	public static void setPixel(double x, double y,PixelState state , PixelState[][] map) {
+	public static void setPixel(double x, double y,GameVariabales.PixelState state , GameVariabales.PixelState[][] map) {
 		int xi = (int)x;
 		int yi = (int)y;
 		
-		if(state == PixelState.visited) {
+		if(state == GameVariabales.PixelState.visited) {
 			map[xi][yi] = state; 
 			return;
 		}
 		
-		if(map[xi][yi] == PixelState.unexplored) {
+		if(map[xi][yi] == GameVariabales.PixelState.unexplored) {
 			map[xi][yi] = state; 
 		}
 	}
@@ -80,86 +74,86 @@ public class Utils {
 		return rotation;
 	}
 	
-	public static void ai(int deltaTime , Algorithm algo) {		
+	public static void ai(int deltaTime) {		
 		if(!Simulator.toogleAI) {
 			return;
 		}
 	
-		if(algo.is_init) {
-			Utils.speedUp(algo);
-			Point dronePoint = algo.drone.getOpticalSensorLocation();
-			algo.init_point = new Point(dronePoint);
-			algo.points.add(dronePoint);
-			algo.mGraph.addVertex(dronePoint);
-			algo.is_init = false;
+		if(GameVariabales.is_init) {
+			Utils.speedUp();
+			Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
+			GameVariabales.init_point = new Point(dronePoint);
+			GameVariabales.points.add(dronePoint);
+			GameVariabales.mGraph.addVertex(dronePoint);
+			GameVariabales.is_init = false;
 		}
 		
-		Point dronePoint = algo.drone.getOpticalSensorLocation();
+		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
 
 		if(Simulator.return_home) {
 			
-			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  algo.max_distance_between_points) {
-				if(algo.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  algo.max_distance_between_points/5) {
-					Utils.speedDown(algo);
+			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  GameVariabales.max_distance_between_points) {
+				if(GameVariabales.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  GameVariabales.max_distance_between_points/5) {
+					Utils.speedDown();
 				} else {
-					Utils.removeLastPoint(algo);
+					Utils.removeLastPoint();
 				}
 			}
 		} else {
-			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) >=  algo.max_distance_between_points) {
-				algo.points.add(dronePoint);
-				algo.mGraph.addVertex(dronePoint);
+			if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) >=  GameVariabales.max_distance_between_points) {
+				GameVariabales.points.add(dronePoint);
+				GameVariabales.mGraph.addVertex(dronePoint);
 			}
 		}
 		
-		if(!algo.is_risky) {
-			Lidar lidar = algo.drone.lidars.get(0);
-			if(lidar.current_distance <= algo.max_risky_distance ) {
-				algo.is_risky = true;
-				algo.risky_dis = lidar.current_distance;				
+		if(!GameVariabales.is_risky) {
+			Lidar lidar = GameVariabales.drone.lidars.get(0);
+			if(lidar.current_distance <= GameVariabales.max_risky_distance ) {
+				GameVariabales.is_risky = true;
+				GameVariabales.risky_dis = lidar.current_distance;				
 			}
 			
-			Lidar lidar1 = algo.drone.lidars.get(1);
-			if(lidar1.current_distance <= algo.max_risky_distance/3 ) {
-				algo.is_risky = true;
+			Lidar lidar1 = GameVariabales.drone.lidars.get(1);
+			if(lidar1.current_distance <= GameVariabales.max_risky_distance/3 ) {
+				GameVariabales.is_risky = true;
 			}
 			
-			Lidar lidar2 = algo.drone.lidars.get(2);
-			if(lidar2.current_distance <= algo.max_risky_distance/3 ) {
-				algo.is_risky = true;
+			Lidar lidar2 = GameVariabales.drone.lidars.get(2);
+			if(lidar2.current_distance <= GameVariabales.max_risky_distance/3 ) {
+				GameVariabales.is_risky = true;
 			}
 			
 		} else {
-			if(!algo.try_to_escape) {
-				algo.try_to_escape = true;
+			if(!GameVariabales.try_to_escape) {
+				GameVariabales.try_to_escape = true;
 				
-				Lidar lidar1 = algo.drone.lidars.get(1);
+				Lidar lidar1 = GameVariabales.drone.lidars.get(1);
 				double a = lidar1.current_distance;
 				
-				Lidar lidar2 = algo.drone.lidars.get(2);
+				Lidar lidar2 = GameVariabales.drone.lidars.get(2);
 				double b = lidar2.current_distance;
 				
-				Lidar lidar0 = algo.drone.lidars.get(0);
+				Lidar lidar0 = GameVariabales.drone.lidars.get(0);
 				double c = lidar0.current_distance;
 				
-				int spin_by = algo.max_angle_risky;
+				int spin_by = GameVariabales.max_angle_risky;
 								
 				if(a > 270 && b > 270) {
-				algo.is_lidars_max = true;
-				Point l1 = Utils.getPointByDistance(dronePoint, lidar1.degrees + algo.drone.getGyroRotation(), lidar1.current_distance);
-				Point l2 = Utils.getPointByDistance(dronePoint, lidar2.degrees + algo.drone.getGyroRotation(), lidar2.current_distance);
-				Point last_point = Utils.getAvgLastPoint(algo);
+				GameVariabales.is_lidars_max = true;
+				Point l1 = Utils.getPointByDistance(dronePoint, lidar1.degrees + GameVariabales.drone.getGyroRotation(), lidar1.current_distance);
+				Point l2 = Utils.getPointByDistance(dronePoint, lidar2.degrees + GameVariabales.drone.getGyroRotation(), lidar2.current_distance);
+				Point last_point = Utils.getAvgLastPoint();
 				double dis_to_lidar1 = Utils.getDistanceBetweenPoints(last_point,l1);
 				double dis_to_lidar2 = Utils.getDistanceBetweenPoints(last_point,l2);
 				
 				if(Simulator.return_home) {
-					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) <  algo.max_distance_between_points) {
-						Utils.removeLastPoint(algo);
+					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) <  GameVariabales.max_distance_between_points) {
+						Utils.removeLastPoint();
 					}
 				} else {
-					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(algo), dronePoint) >=  algo.max_distance_between_points) {
-						algo.points.add(dronePoint);
-						algo.mGraph.addVertex(dronePoint);
+					if( Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) >=  GameVariabales.max_distance_between_points) {
+						GameVariabales.points.add(dronePoint);
+						GameVariabales.mGraph.addVertex(dronePoint);
 					}
 				}
 				
@@ -178,133 +172,131 @@ public class Utils {
 				if(a < b ) {
 					spin_by *= (-1 ); 
 				}
-				else if(algo.risky_dis >= 100) {
+				else if(GameVariabales.risky_dis >= 100) {
 					spin_by *= (-1 ); 
 				}
 			}
 				
 			if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-				System.out.println(a+"  "+b+"  "+c);
-				System.out.println(" point : (" +dronePoint.x+","+dronePoint.y+")");
 				stopCPUS();
-				gameEnd=true;
+				GameVariabales.gameEnd=true;
 				gameOverMessage();
 			}
-			Utils.spinBy(spin_by,true, algo, new Func() { 
+			Utils.spinBy(spin_by,true, new Func() { 
 					@Override
 					public void method() {
-						algo.try_to_escape = false;
-						algo.is_risky = false;
+						GameVariabales.try_to_escape = false;
+						GameVariabales.is_risky = false;
 					}
 			});
 		}
 	}
 	}
 	
-	public static void updateForAlgo(int deltaTime , Algorithm algo) {
-		Utils.updateVisited(algo);
-		Utils.updateMapByLidars(algo);
+	public static void updateForAlgo(int deltaTime , GameVariabales vars) {
+		Utils.updateVisited();
+		Utils.updateMapByLidars();
 		
-		Utils.ai(deltaTime , algo);
+		Utils.ai(deltaTime);
 		
 		
-		if(algo.isRotating != 0) {
-			Utils.updateRotating(deltaTime , algo);
+		if(GameVariabales.isRotating != 0) {
+			Utils.updateRotating(deltaTime);
 		}
-		if(algo.isSpeedUp) {
-			algo.drone.speedUp(deltaTime);
+		if(GameVariabales.isSpeedUp) {
+			GameVariabales.drone.speedUp(deltaTime);
 		} else {
-			algo.drone.slowDown(deltaTime);
+			GameVariabales.drone.slowDown(deltaTime);
 		}
 		
 	}
 	
 	
 	
-	public static void initMap(Algorithm algo) {
-		algo.map = new PixelState[algo.map_size][algo.map_size];
-		for(int i=0;i<algo.map_size;i++) {
-			for(int j=0;j<algo.map_size;j++) {
-				algo.map[i][j] = PixelState.unexplored;
+	public static void initMap() {
+		GameVariabales.map = new GameVariabales.PixelState[GameVariabales.map_size][GameVariabales.map_size];
+		for(int i=0;i<GameVariabales.map_size;i++) {
+			for(int j=0;j<GameVariabales.map_size;j++) {
+				GameVariabales.map[i][j] = GameVariabales.PixelState.unexplored;
 			}
 		}
 		
-		algo.droneStartingPoint = new Point(algo.map_size/2,algo.map_size/2);
+		GameVariabales.droneStartingPoint = new Point(GameVariabales.map_size/2,GameVariabales.map_size/2);
 	}
 	
-	
-	public static void doLeftRight(Algorithm algo) {
-		if(algo.is_finish) {
-			algo.leftOrRight *= -1;
-			algo.counter++;
-			algo.is_finish = false;
+	// Unused
+	public static void doLeftRight() {
+		if(GameVariabales.is_finish) {
+			GameVariabales.leftOrRight *= -1;
+			GameVariabales.counter++;
+			GameVariabales.is_finish = false;
 			
-			Utils.spinBy(algo.max_rotation_to_direction*algo.leftOrRight,false , algo,new Func() {
+			Utils.spinBy(GameVariabales.max_rotation_to_direction*GameVariabales.leftOrRight,false,new Func() {
 				@Override
 				public void method() {
-					algo.is_finish = true;
+					GameVariabales.is_finish = true;
 				}
 			});
 		}
 	}
 	
-	public static void speedUp(Algorithm algo) {
-		algo.isSpeedUp = true;
+	public static void speedUp() {
+		GameVariabales.isSpeedUp = true;
 	}
 	
-	public static void speedDown(Algorithm algo) {
-		algo.isSpeedUp = false;
+	public static void speedDown() {
+		GameVariabales.isSpeedUp = false;
 	}
 	
 	
-	public static void updateVisited(Algorithm algo) {
-		Point dronePoint = algo.drone.getOpticalSensorLocation();
-		Point fromPoint = new Point(dronePoint.x + algo.droneStartingPoint.x,dronePoint.y + algo.droneStartingPoint.y);
-		Utils.setPixel(fromPoint.x,fromPoint.y,PixelState.visited,algo.map);		
+	public static void updateVisited() {
+		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
+		Point fromPoint = new Point(dronePoint.x + GameVariabales.droneStartingPoint.x,dronePoint.y + GameVariabales.droneStartingPoint.y);
+		Utils.setPixel(fromPoint.x,fromPoint.y,GameVariabales.PixelState.visited,GameVariabales.map);		
 	}
 
-	public static void updateMapByLidars(Algorithm algo) {
-		Point dronePoint = algo.drone.getOpticalSensorLocation();
-		Point fromPoint = new Point(dronePoint.x + algo.droneStartingPoint.x,dronePoint.y + algo.droneStartingPoint.y);
+	public static void updateMapByLidars() {
+		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
+		Point fromPoint = new Point(dronePoint.x + GameVariabales.droneStartingPoint.x,dronePoint.y + GameVariabales.droneStartingPoint.y);
 		
-		for(int i=0;i<algo.drone.lidars.size();i++) {
-			Lidar lidar = algo.drone.lidars.get(i);
-			double rotation = algo.drone.getGyroRotation() + lidar.degrees;
+		for(int i=0;i<GameVariabales.drone.lidars.size();i++) {
+			Lidar lidar = GameVariabales.drone.lidars.get(i);
+			double rotation = GameVariabales.drone.getGyroRotation() + lidar.degrees;
 			for(int distanceInCM=0;distanceInCM < lidar.current_distance;distanceInCM++) {
 				Point p = Utils.getPointByDistance(fromPoint, rotation, distanceInCM);
-				Utils.setPixel(p.x,p.y,PixelState.explored,algo.map);
+				Utils.setPixel(p.x,p.y,GameVariabales.PixelState.explored,GameVariabales.map);
 			}
 			
 			if(lidar.current_distance > 0 && lidar.current_distance < Config.lidarLimit - Config.lidarNoise) {
 				Point p = Utils.getPointByDistance(fromPoint, rotation, lidar.current_distance);
-				Utils.setPixel(p.x,p.y,PixelState.blocked,algo.map);
+				Utils.setPixel(p.x,p.y,GameVariabales.PixelState.blocked,GameVariabales.map);
 			}
 		}
 	}
 	
-	public static void updateRotating(int deltaTime , Algorithm algo) {
+	public static void updateRotating(int deltaTime) {
 		
-		if(algo.degrees_left.size() == 0) {
+		if(GameVariabales.degrees_left.size() == 0) {
 			return;
 		}
 		
-		double degrees_left_to_rotate = algo.degrees_left.get(0);
+		double degrees_left_to_rotate = GameVariabales.degrees_left.get(0);
 		boolean isLeft = true;
 		if(degrees_left_to_rotate > 0) {
 			isLeft = false;
 		}
 		
-		double curr =  algo.drone.getGyroRotation();
+		double curr =  GameVariabales.drone.getGyroRotation();
 		double just_rotated = 0;
 		
 		if(isLeft) {
 			
-			just_rotated = curr - algo.lastGyroRotation;
+			just_rotated = curr - GameVariabales.lastGyroRotation;
 			if(just_rotated > 0) {
 				just_rotated = -(360 - just_rotated);
 			}
 		} else {
-			just_rotated = curr - algo.lastGyroRotation;
+			just_rotated = curr - GameVariabales.lastGyroRotation;
 			if(just_rotated < 0) {
 				just_rotated = 360 + just_rotated;
 			}
@@ -312,93 +304,90 @@ public class Utils {
 		
 	
 		 
-		algo.lastGyroRotation = curr;
+		GameVariabales.lastGyroRotation = curr;
 		degrees_left_to_rotate-=just_rotated;
-		algo.degrees_left.remove(0);
-		algo.degrees_left.add(0,degrees_left_to_rotate);
+		GameVariabales.degrees_left.remove(0);
+		GameVariabales.degrees_left.add(0,degrees_left_to_rotate);
 		
 		if((isLeft && degrees_left_to_rotate >= 0) || (!isLeft && degrees_left_to_rotate <= 0)) {
-			algo.degrees_left.remove(0);
+			GameVariabales.degrees_left.remove(0);
 			
-			Func func = algo.degrees_left_func.get(0);
+			Func func = GameVariabales.degrees_left_func.get(0);
 			if(func != null) {
 				func.method();
 			}
-			algo.degrees_left_func.remove(0);
+			GameVariabales.degrees_left_func.remove(0);
 			
 			
-			if(algo.degrees_left.size() == 0) {
-				algo.isRotating = 0;
+			if(GameVariabales.degrees_left.size() == 0) {
+				GameVariabales.isRotating = 0;
 			}
 			return; 
 		}
 		
 		int direction = (int)(degrees_left_to_rotate / Math.abs(degrees_left_to_rotate));
-		algo.drone.rotateLeft(deltaTime * direction);
+		GameVariabales.drone.rotateLeft(deltaTime * direction);
 		
 	}
 	
-	public static void spinBy(double degrees,boolean isFirst, Algorithm algo, Func func) {
-		algo.lastGyroRotation = algo.drone.getGyroRotation();
+	public static void spinBy(double degrees,boolean isFirst, Func func) {
+		GameVariabales.lastGyroRotation = GameVariabales.drone.getGyroRotation();
 		if(isFirst) {
-			algo.degrees_left.add(0,degrees);
-			algo.degrees_left_func.add(0,func);
-		
-			
+			GameVariabales.degrees_left.add(0,degrees);
+			GameVariabales.degrees_left_func.add(0,func);		
 		} else {
-			algo.degrees_left.add(degrees);
-			algo.degrees_left_func.add(func);
+			GameVariabales.degrees_left.add(degrees);
+			GameVariabales.degrees_left_func.add(func);
 		}
-		
-		algo.isRotating =1;
+		GameVariabales.isRotating =1;
 	}
 	
-	public static void spinBy(double degrees,boolean isFirst , Algorithm algo) {
-		algo.lastGyroRotation = algo.drone.getGyroRotation();
+	public static void spinBy(double degrees,boolean isFirst) {
+		GameVariabales.lastGyroRotation = GameVariabales.drone.getGyroRotation();
 		if(isFirst) {
-			algo.degrees_left.add(0,degrees);
-			algo.degrees_left_func.add(0,null);
+			GameVariabales.degrees_left.add(0,degrees);
+			GameVariabales.degrees_left_func.add(0,null);
 		} else {
-			algo.degrees_left.add(degrees);
-			algo.degrees_left_func.add(null);
+			GameVariabales.degrees_left.add(degrees);
+			GameVariabales.degrees_left_func.add(null);
 		}
 		
-		algo.isRotating =1;
+		GameVariabales.isRotating =1;
 	}
 	
-	public static void spinBy(double degrees , Algorithm algo) {
-		algo.lastGyroRotation = algo.drone.getGyroRotation();
+	public static void spinBy(double degrees) {
+		GameVariabales.lastGyroRotation = GameVariabales.drone.getGyroRotation();
 		
-		algo.degrees_left.add(degrees);
-		algo.degrees_left_func.add(null);
-		algo.isRotating = 1;
+		GameVariabales.degrees_left.add(degrees);
+		GameVariabales.degrees_left_func.add(null);
+		GameVariabales.isRotating = 1;
 	}
 	
-	public static Point getLastPoint(Algorithm algo) {
-		if(algo.points.size() == 0) {
-			return algo.init_point;
+	public static Point getLastPoint() {
+		if(GameVariabales.points.size() == 0) {
+			return GameVariabales.init_point;
 		}
 		
-		Point p1 = algo.points.get(algo.points.size()-1);
+		Point p1 = GameVariabales.points.get(GameVariabales.points.size()-1);
 		return p1;
 	}
 	
-	public static Point removeLastPoint(Algorithm algo) {
-		if(algo.points.isEmpty()) {
-			return algo.init_point;
+	public static Point removeLastPoint() {
+		if(GameVariabales.points.isEmpty()) {
+			return GameVariabales.init_point;
 		}
 		
-		return algo.points.remove(algo.points.size()-1);
+		return GameVariabales.points.remove(GameVariabales.points.size()-1);
 	}
 	
 	
-	public static Point getAvgLastPoint(Algorithm algo) {
-		if(algo.points.size() < 2) {
-			return algo.init_point;
+	public static Point getAvgLastPoint() {
+		if(GameVariabales.points.size() < 2) {
+			return GameVariabales.init_point;
 		}
 		
-		Point p1 = algo.points.get(algo.points.size()-1);
-		Point p2 = algo.points.get(algo.points.size()-2);
+		Point p1 = GameVariabales.points.get(GameVariabales.points.size()-1);
+		Point p2 = GameVariabales.points.get(GameVariabales.points.size()-2);
 		return new Point((p1.x + p2.x) /2, (p1.y + p2.y) /2);
 	}
 

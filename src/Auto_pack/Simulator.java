@@ -7,8 +7,7 @@ public class Simulator {
 	public JFrame frame;
 	public static JLabel info_label_drone , info_label_config;
 	public static boolean return_home = false , toogleStop = true , toogleRealMap = true , toogleAI = false;
-	public static Algorithm algo;
-	
+	 
 	public Simulator() {
 		Visualizator.initialize(this);
 		start();
@@ -16,10 +15,9 @@ public class Simulator {
 	
 	public void start() {
 		int map_index = 4;
-		Map map = new Map(Config.imageSourcePath+"\\Maps\\p1" + map_index + ".png",Config.startPoints[map_index-1]);
-		algo = new Algorithm(map);
+		Map map = new Map(Config.imageSourcePath +"\\Maps\\p1" + map_index + ".png",Config.startPoints[map_index-1]);
 		
-		Painter painter = new Painter(algo);
+		Painter painter = new Painter();
 		painter.setBounds(0, 0, 2000, 2000);
 		frame.getContentPane().add(painter);
 		
@@ -27,10 +25,10 @@ public class Simulator {
 		painterCPU.addFunction(frame::repaint);
 		
 		painterCPU.play();
-		Utils.play(algo);
+		Utils.play();
 		
 		CPU updatesCPU = new CPU(60,"updates");
-		updatesCPU.addFunction(algo.drone::update);
+		updatesCPU.addFunction(GameVariabales.drone::update);
 		
 		updatesCPU.play();
 		
@@ -44,8 +42,6 @@ public class Simulator {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					//Timer t=new Timer();
-					//t.start();
 					Simulator simulator_ = new Simulator();
 					simulator_.frame.setVisible(true);
 				} catch (Exception e) {
@@ -56,7 +52,7 @@ public class Simulator {
 	}
 	
 	public void updateInfo(int deltaTime) {
-		Utils.updateInfo(deltaTime , info_label_drone , info_label_config , algo);
+		Utils.updateInfo(deltaTime , info_label_drone , info_label_config);
 	}
 	
 }

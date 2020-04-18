@@ -7,15 +7,13 @@ public class Timer extends Thread{
 
 	public void run()
 	{
-		while(!Utils.gameEnd) {
+		while(!GameVariabales.gameEnd) {
 			try { 
-				Thread.sleep(1000);//For some reason it only works that way!!!
+				Thread.sleep(1000);
 			}
 			catch (InterruptedException e) { e.printStackTrace(); }
 
-
 			while(flag) {
-
 				counterSeconds++;
 				try { 
 					Thread.sleep(1000);

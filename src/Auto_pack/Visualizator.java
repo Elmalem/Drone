@@ -13,8 +13,6 @@ public class Visualizator {
 	
 	final static ArrayList<Integer> ButtonHeights = new ArrayList<Integer>(Arrays.asList(0 , 30 , 60 , 90 , 120 , 150 , 180 , 210));
 	final static ArrayList<Integer> ButtonWeights = new ArrayList<Integer>(Arrays.asList(1400 , 1512 , 1624));
-
-	// This class only generate the visualization settings 
 	
 	public static void initialize(Simulator main) {
 		main.frame = new JFrame();
@@ -23,20 +21,14 @@ public class Visualizator {
 		main.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		main.frame.getContentPane().setLayout(null);
 		
-		////////////////////////////
-		Timer t=new Timer();
-		////////////////////////////
+		Timer timer =new Timer();
 		
 		JButton stopBtn = new JButton("Pause");
 		stopBtn.addActionListener(new ActionListener()
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {					 
-//				  try {
-					Timer.flag=false;
-//				} catch (InterruptedException e1) {
-//					e1.printStackTrace();
-//				}
+				  Timer.flag=false;
 				  CPU.stopAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
@@ -50,7 +42,6 @@ public class Visualizator {
 			  public void actionPerformed(ActionEvent e)
 			  {
 				  Timer.flag=true;
-				  
 				  CPU.resumeAllCPUS();
 				  Simulator.toogleStop = !Simulator.toogleStop;
 			  }
@@ -74,7 +65,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  t.start();
+				  timer.start();
 				  Simulator.toogleAI = !Simulator.toogleAI;
 			  }
 		});
@@ -87,11 +78,11 @@ public class Visualizator {
 			  public void actionPerformed(ActionEvent e)
 			  {
 				  Simulator.return_home = !Simulator.return_home;
-				  Utils.speedDown(Simulator.algo);
-				  Utils.spinBy(180, true,  Simulator.algo,new Func() {
+				  Utils.speedDown();
+				  Utils.spinBy(180, true,new Func() {
 						@Override
 						public void method() {
-							Utils.speedUp(Simulator.algo);
+							Utils.speedUp();
 						}
 					});
 			  }
@@ -105,7 +96,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.speedUp(Simulator.algo);
+				  Utils.speedUp();
 			  }
 		});
 		speedBtn1.setBounds(ButtonWeights.get(1), ButtonHeights.get(0), 110, 30);
@@ -116,7 +107,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.speedDown(Simulator.algo);
+				  Utils.speedDown();
 			  }
 		});
 		speedBtn2.setBounds(ButtonWeights.get(1), ButtonHeights.get(1), 110, 30);
@@ -128,7 +119,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.spinBy(180 , Simulator.algo);
+				  Utils.spinBy(180);
 			  }
 		});
 		spinBtn1.setBounds(ButtonWeights.get(2), ButtonHeights.get(0), 110, 30);
@@ -139,7 +130,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.spinBy(90 , Simulator.algo);
+				  Utils.spinBy(90);
 			  }
 		});
 		spinBtn2.setBounds(ButtonWeights.get(2), ButtonHeights.get(1), 110, 30);
@@ -150,7 +141,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.spinBy(60 , Simulator.algo);
+				  Utils.spinBy(60);
 			  }
 		});
 		spinBtn3.setBounds(ButtonWeights.get(2), ButtonHeights.get(2), 110, 30);
@@ -161,7 +152,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.spinBy(60 , Simulator.algo);
+				  Utils.spinBy(60);
 			  }
 		});
 		spinBtn4.setBounds(ButtonWeights.get(2), ButtonHeights.get(3), 110, 30);
@@ -172,7 +163,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.spinBy(30 , Simulator.algo);
+				  Utils.spinBy(30);
 			  }
 		});
 		spinBtn5.setBounds(ButtonWeights.get(2), ButtonHeights.get(4), 110, 30);
@@ -183,7 +174,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.spinBy(-30 , Simulator.algo);
+				  Utils.spinBy(-30);
 			  }
 		});
 		spinBtn6.setBounds(ButtonWeights.get(2), ButtonHeights.get(5), 110, 30);
@@ -194,7 +185,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.spinBy(-45 , Simulator.algo);
+				  Utils.spinBy(-45);
 			  }
 		});
 		spinBtn7.setBounds(ButtonWeights.get(2), ButtonHeights.get(6), 110, 30);
@@ -205,7 +196,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Utils.spinBy(-60 , Simulator.algo);
+				  Utils.spinBy(-60);
 			  }
 		});
 		spinBtn8.setBounds(ButtonWeights.get(2), ButtonHeights.get(7), 110, 30);

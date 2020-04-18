@@ -8,10 +8,7 @@ public class Config {
 			new Point(84,73),
 			new Point(92,100)};
 	
-	public static String imageSourcePath = "C:\\Users\\Snir\\git\\Drone";	//Snir
-	//public static String path = "C:\\\\Users\\\\user\\\\git\\\\Matala.1"; //Lioz
-
-	
+	public static String imageSourcePath = "C:\\\\Users\\\\user\\\\git\\\\Drone";	//Snir
 	public static int lidarLimit = 300; // in cm
 	public static int lidarNoise = 1; // in cm 3
 	public static int CMPerPixel = 5;
