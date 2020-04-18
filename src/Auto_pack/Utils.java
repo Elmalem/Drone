@@ -149,7 +149,11 @@ public class Utils {
 				
 				Lidar lidar0 = GameVariabales.drone.lidars.get(0);
 				double c = lidar0.current_distance;
-								
+				
+				System.out.println("position");
+				System.out.println("a " + a + " b " + b + " c " + c);
+				System.out.println("Drone location (" + GameVariabales.drone.getPointOnMap().x + "," + GameVariabales.drone.getPointOnMap().y + ")");
+				System.out.println("position // ");
 				if(a > 270 && b > 270) {	
 					
 				GameVariabales.is_lidars_max = true;
@@ -182,9 +186,8 @@ public class Utils {
 				}
 			}
 				
-			if((a<=1 && b<=1 && c<=1) && (dronePoint.x > 1 && dronePoint.y > 1)) {
-				System.out.println("a " + a + " b " + b + " c " + c);
-				System.out.println("Drone location x " + dronePoint.x + " y " + dronePoint.y);
+			if(((a <= 1 && b <= 1 && c <= 1) && (Math.abs(GameVariabales.drone.getPointOnMap().x - Config.startPoints[Config.map_index - 1].x) > 1 && Math.abs(GameVariabales.drone.getPointOnMap().y - Config.startPoints[Config.map_index - 1].y) > 1))) {
+				System.out.println("Danger one ->" + "a " + a + " b " + b + " c " + c);
 				stopCPUS();
 				GameVariabales.gameEnd=true;
 				gameOverMessage();
@@ -202,19 +205,21 @@ public class Utils {
 	}
 	
 	public static void unbroken(int deltaTime , double a , double b , double c) {
-		while (((a <= 1 && b <= 1 && c <= 1) && (!GameVariabales.is_init))) {
-			GameVariabales.spin_by = -1;
+		if (((a <= 1.5 && b <= 1.5 && c <= 1.5)) && (GameVariabales.drone.getPointOnMap().x != GameVariabales.init_point.x && GameVariabales.drone.getPointOnMap().y != GameVariabales.init_point.y)) {
+			GameVariabales.spin_by *= -1;
 		}	
 	} 
+	
+	public static void rotateUpdate(int deltaTime) {
+		if(GameVariabales.isRotating != 0) {
+			Utils.updateRotating(deltaTime);
+		}
+	}
 	
 	public static void gameUpdates(int deltaTime) {
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
 		Utils.ai(deltaTime);
-		
-		if(GameVariabales.isRotating != 0) {
-			Utils.updateRotating(deltaTime);
-		}
 		if(GameVariabales.isSpeedUp) {
 			GameVariabales.drone.speedUp(deltaTime);
 		} else {
@@ -291,8 +296,9 @@ public class Utils {
 		if(GameVariabales.degrees_left.size() == 0) {
 			return;
 		}
-		
+				
 		double degrees_left_to_rotate = GameVariabales.degrees_left.get(0);
+
 		boolean isLeft = true;
 		if(degrees_left_to_rotate > 0) {
 			isLeft = false;

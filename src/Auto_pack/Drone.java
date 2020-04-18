@@ -48,28 +48,24 @@ public class Drone {
 	}
 	
 	public void update(int deltaTime) {
-
 		double distancedMoved = (speed*100)*((double)deltaTime/1000);
-		
 		pointFromStart =  Utils.getPointByDistance(pointFromStart, rotation, distancedMoved);
-		
 		double noiseToDistance = Utils.noiseBetween(Config.min_motion_accuracy,Config.max_motion_accuracy,false);
-		sensorOpticalFlow = Utils.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved*noiseToDistance);
-		
+		sensorOpticalFlow = Utils.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved*noiseToDistance);		
 		double noiseToRotation = Utils.noiseBetween(Config.min_rotation_accuracy,Config.max_rotation_accuracy,false);
 		double milli_per_minute = 60000;
-		gyroRotation += (1-noiseToRotation)*deltaTime/milli_per_minute;
+		gyroRotation += (1 - noiseToRotation) * deltaTime/milli_per_minute;
 		gyroRotation = formatRotation(gyroRotation);
 	}
 	
 	public static double formatRotation(double rotationValue) {
 		rotationValue %= 360;
 		if(rotationValue < 0) {
-			rotationValue = 360 -rotationValue;
+			rotationValue = 360 - rotationValue;
 		}
 		return rotationValue;
 	}
-	
+	 
 	public double getRotation() {
 		return rotation;
 	}
@@ -82,23 +78,18 @@ public class Drone {
 		return new Point(sensorOpticalFlow);
 	}
 
-	
 	public void rotateLeft(int deltaTime) {
-		double rotationChanged = Config.rotation_per_second*deltaTime/1000;
-		
+		double rotationChanged = Config.rotation_per_second * deltaTime / 1000;	
 		rotation += rotationChanged;
-		rotation = formatRotation(rotation);
-		
+		rotation = formatRotation(rotation);	
 		gyroRotation += rotationChanged;
 		gyroRotation = formatRotation(gyroRotation);
 	}
 	
 	public void rotateRight(int deltaTime) {
-		double rotationChanged = -Config.rotation_per_second*deltaTime/1000;
-		
+		double rotationChanged = -Config.rotation_per_second * deltaTime / 1000;	
 		rotation += rotationChanged;
-		rotation = formatRotation(rotation);
-		
+		rotation = formatRotation(rotation);	
 		gyroRotation += rotationChanged;
 		gyroRotation = formatRotation(gyroRotation);
 	}
@@ -122,8 +113,7 @@ public class Drone {
 	int j=0;
 	
 	public String getInfoHTML() {
-		DecimalFormat df = new DecimalFormat("#.####");
-		
+		DecimalFormat df = new DecimalFormat("#.####");		
 		String info = "<html>";
 		info += "Rotation: " + df.format(rotation) +"<br>";
 		info += "Location: " + pointFromStart +"<br>";

@@ -7,8 +7,7 @@ public class GameVariabales {
 	public static enum PixelState {blocked,explored,unexplored,visited};
 	
 	public static void init() {
-		int map_index = 4;
-		GameVariabales.realMap = new Map(Config.imageSourcePath +"\\Maps\\p1" + map_index + ".png",Config.startPoints[map_index-1]);		
+		GameVariabales.realMap = new Map(Config.imageSourcePath +"\\Maps\\p1" + Config.map_index + ".png",Config.startPoints[Config.map_index-1]);		
 		GameVariabales.degrees_left = new ArrayList<>();
 		GameVariabales.degrees_left_func =  new ArrayList<>();
 		GameVariabales.points = new ArrayList<Point>();	
