@@ -17,8 +17,6 @@ public class GameVariabales {
 		GameVariabales.drone.addLidar(90);
 		GameVariabales.drone.addLidar(-90);
 		GameVariabales.isRotating = 0;
-		GameVariabales.ai_cpu = new CPU(200,"Auto_AI");
-		GameVariabales.ai_cpu.addFunction(GameVariabales::update);
 		Utils.initMap();		
 	}
 	
@@ -53,8 +51,4 @@ public class GameVariabales {
 	public static Point init_point;
 	public static int counter = 0;
 	public static double lastGyroRotation = 0;
-
-	public static void update(int deltaTime) {
-		Utils.gameUpdates(deltaTime);
-	}
 }

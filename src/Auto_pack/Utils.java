@@ -33,7 +33,6 @@ public class Utils {
 	
 	public static void play() {
 		GameVariabales.drone.play();
-		GameVariabales.ai_cpu.play();
 	}
 
 	// CM sign
@@ -203,11 +202,10 @@ public class Utils {
 	}
 	
 	public static void unbroken(int deltaTime , double a , double b , double c) {
-		while (((a < 1 && b < 1 && c < 1) && (!GameVariabales.is_init))) {
+		while (((a <= 1 && b <= 1 && c <= 1) && (!GameVariabales.is_init))) {
 			GameVariabales.spin_by = -1;
-			Utils.spinBy(GameVariabales.spin_by);
 		}	
-	}
+	} 
 	
 	public static void gameUpdates(int deltaTime) {
 		Utils.updateVisited();

@@ -17,16 +17,20 @@ public class Simulator {
 		painter.setBounds(0, 0, 2000, 2000);
 		Simulator.frame.getContentPane().add(painter);
 		
-		CPU painterCPU = new CPU(200,"painter"); // 60 FPS painter
-		painterCPU.addFunction(Simulator.frame::repaint);
-		painterCPU.play();
-				
 		Utils.play();
 		
 		CPU unbrokenCPU = new CPU(200 , "unbroken");
 		unbrokenCPU.addFunction(this::unbroken);
 		unbrokenCPU.play();
 		
+		CPU painterCPU = new CPU(200,"painter"); // 60 FPS painter
+		painterCPU.addFunction(Simulator.frame::repaint);
+		painterCPU.play();
+		
+		CPU ai_cpu = new CPU(200,"Auto_AI");
+		ai_cpu.addFunction(this::updateAi);
+		ai_cpu.play();
+			
 		CPU updatesCPU = new CPU(60,"updates");
 		updatesCPU.addFunction(GameVariabales.drone::update);
 		updatesCPU.play();
@@ -57,5 +61,10 @@ public class Simulator {
 	public void unbroken(int deltaTime) {
 		Utils.unbroken(deltaTime, GameVariabales.drone.lidars.get(1).getSimulationDistance(deltaTime), GameVariabales.drone.lidars.get(2).getSimulationDistance(deltaTime) , GameVariabales.drone.lidars.get(0).getSimulationDistance(deltaTime));
 	}
+	
+	public void updateAi(int deltaTime) {
+		Utils.gameUpdates(deltaTime);
+	}
+
 	
 }
