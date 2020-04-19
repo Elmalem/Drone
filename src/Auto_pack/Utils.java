@@ -150,10 +150,6 @@ public class Utils {
 				Lidar lidar0 = GameVariabales.drone.lidars.get(0);
 				double c = lidar0.current_distance;
 				
-				System.out.println("position");
-				System.out.println("a " + a + " b " + b + " c " + c);
-				System.out.println("Drone location (" + GameVariabales.drone.getPointOnMap().x + "," + GameVariabales.drone.getPointOnMap().y + ")");
-				System.out.println("position // ");
 				if(a > 270 && b > 270) {	
 					
 				GameVariabales.is_lidars_max = true;
@@ -175,16 +171,16 @@ public class Utils {
 				}
 				
 				GameVariabales.spin_by = 90;
-				
+							 	
 				if(Simulator.return_home || dis_to_lidar1 < dis_to_lidar2) {
 					GameVariabales.spin_by *= -1;
 				}
 				
 			} else {		
-				if (((a <= 1 && b <= 1 && c <= 1)) && (!GameVariabales.is_init)) {
+			   	if (((a <= 1 && b <= 1 && c <= 1)) && (!GameVariabales.is_init)) {
 					GameVariabales.spin_by *= -1;
 					spinBy(GameVariabales.spin_by);
-				}	
+ 				}	
 				else if(a < b || GameVariabales.risky_dis >= 100) {
 					GameVariabales.spin_by *= (-1 ); 
 				}
@@ -197,6 +193,9 @@ public class Utils {
 				gameOverMessage();
 				System.exit(0);
 			}
+			
+			System.out.println("Spin by : " + GameVariabales.spin_by);
+
 			Utils.spinBy(GameVariabales.spin_by,true, new Func() { 
 					@Override
 					public void method() {
@@ -211,7 +210,13 @@ public class Utils {
 	public static void unbroken(int deltaTime , double a , double b , double c) {
 		if (((a <= 1 && b <= 1 && c <= 1)) && (!GameVariabales.is_init)) {
 			GameVariabales.spin_by *= -1;
-			spinBy(GameVariabales.spin_by);
+			Utils.spinBy(GameVariabales.spin_by , false , new Func() { 
+				@Override
+				public void method() {
+					GameVariabales.try_to_escape = false;
+					GameVariabales.is_risky = false;
+				}
+		});
 		}	
 	} 
 	
@@ -222,22 +227,25 @@ public class Utils {
 	}
 	
 	public static void gameUpdates(int deltaTime) {
+		
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
-
+		
 		Utils.ai(deltaTime);
-		if(GameVariabales.isSpeedUp) {
+		
+		if (GameVariabales.isSpeedUp) {
 			GameVariabales.drone.speedUp(deltaTime);
 		} else {
 			GameVariabales.drone.slowDown(deltaTime);
 		}
-		
 	}
 	
 	
 	
 	public static void initMap() {
+		
 		GameVariabales.map = new GameVariabales.PixelState[Config.map_size][Config.map_size];
+		
 		for(int i=0;i<Config.map_size;i++) {
 			for(int j=0;j<Config.map_size;j++) {
 				GameVariabales.map[i][j] = GameVariabales.PixelState.unexplored;
@@ -249,6 +257,7 @@ public class Utils {
 	
 	// Unused
 	public static void doLeftRight() {
+		
 		if(GameVariabales.is_finish) {
 			GameVariabales.leftOrRight *= -1;
 			GameVariabales.counter++;
