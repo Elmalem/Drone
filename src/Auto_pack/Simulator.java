@@ -16,10 +16,6 @@ public class Simulator {
 		Painter painter = new Painter();
 		painter.setBounds(0, 0, 2000, 2000);
 		Simulator.frame.getContentPane().add(painter);
-						
-		CPU unbrokenCPU = new CPU(200 , "unbroken");
-		unbrokenCPU.addFunction(this::unbroken);
-		unbrokenCPU.play();
 		
 		Utils.play();
 		
@@ -30,6 +26,10 @@ public class Simulator {
 		CPU ai_cpu = new CPU(200,"Auto_AI");
 		ai_cpu.addFunction(this::updateAi);
 		ai_cpu.play();
+		
+		CPU unbrokenCPU = new CPU(200 , "unbroken");
+		unbrokenCPU.addFunction(this::unbroken);
+		unbrokenCPU.play();
 			
 		CPU rotatingCPU = new CPU(200,"rotate");
 		rotatingCPU.addFunction(this::rotateUpdate);
@@ -64,7 +64,7 @@ public class Simulator {
 	}
 	
 	public void unbroken(int deltaTime) {
-		Utils.unbroken(deltaTime, GameVariabales.drone.lidars.get(1).getDistance(deltaTime), GameVariabales.drone.lidars.get(2).getDistance(deltaTime) , GameVariabales.drone.lidars.get(0).getDistance(deltaTime));
+		Utils.unbroken(deltaTime);
 	}
 	
 	public void rotateUpdate(int deltaTime) {
