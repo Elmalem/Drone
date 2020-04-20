@@ -32,7 +32,7 @@ public class Lidar {
 		Random ran= new Random();
 		double distanceInCM;
 		if(ran.nextFloat() <= 0.05f) { // 5% of the time, not getting an answer
-			distanceInCM = 1;
+			distanceInCM = Config.minimumCenterDistanceToWall;
 		} else {
 			distanceInCM = getDistance(deltaTime);
 			distanceInCM += (int)ran.nextInt(Config.lidarNoise * 2) - Config.lidarNoise; // +- 5 CM to the final calc

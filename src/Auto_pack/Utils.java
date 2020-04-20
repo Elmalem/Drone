@@ -1,10 +1,7 @@
 package Auto_pack;
-
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import Auto_pack.GameVariabales.PixelState;
 
 public class Utils {
 
@@ -191,12 +188,12 @@ public class Utils {
 					}
 				}
 
-//				if ((a <= 1 && b <= 1 && c <= 1) && !GameVariabales.is_init) {
-//					stopCPUS();
-//					GameVariabales.gameEnd = true;
-//					gameOverMessage();
-//					System.exit(0);
-//				}
+				if (GameVariabales.realMap.isCollide((int)(GameVariabales.drone.getPointOnMap().x), (int)(GameVariabales.drone.getPointOnMap().y))) {
+					stopCPUS();
+					GameVariabales.gameEnd = true;
+					gameOverMessage();
+					System.exit(0);
+				}
 
 				Utils.spinBy(GameVariabales.spin_by, true, new Func() {
 					@Override
@@ -215,29 +212,10 @@ public class Utils {
 		}
 	}
 
-	public static void unbroken(int deltaTime) {
-		if (!GameVariabales.is_init) {
-			Point point = GameVariabales.drone.getPointOnMap();
-			int x = (int) (point.x);
-			int y = (int) (point.y);
-			if ( GameVariabales.map[x][y] == PixelState.blocked
-					|| !GameVariabales.realMap.map[x - 3][y - 3] || !GameVariabales.realMap.map[x - 3][y + 3]
-					|| !GameVariabales.realMap.map[x + 3][y - 3] || !GameVariabales.realMap.map[x + 3][y + 3]
-					|| !GameVariabales.realMap.map[x - 3][y] || !GameVariabales.realMap.map[x][y - 3]
-					|| !GameVariabales.realMap.map[x][y] || !GameVariabales.realMap.map[x][y + 3]
-					|| !GameVariabales.realMap.map[x + 3][y]) {		
-				GameVariabales.spin_by *= -1;
-//				spinBy( - GameVariabales.spin_by);
-				System.out.println("HERE");
-			}
-		}
-	}
-
 	public static void gameUpdates(int deltaTime) {
-
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
-		Utils.ai(deltaTime);
+		Utils.ai(deltaTime);	
 		if (GameVariabales.isSpeedUp) {
 			GameVariabales.drone.speedUp(deltaTime);
 		} else {

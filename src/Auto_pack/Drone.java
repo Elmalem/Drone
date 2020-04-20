@@ -20,7 +20,7 @@ public class Drone {
 		pointFromStart = new Point();
 		sensorOpticalFlow = new Point();
 		lidars = new ArrayList<>();
-		speed = 0.75;	
+		speed = 0.5;	
 		rotation = 0;
 		gyroRotation = rotation;	
 		cpu = new CPU(100,"Drone");
@@ -47,8 +47,27 @@ public class Drone {
 		return new Point(x,y);
 	}
 	
-	public void update(int deltaTime) {
-		double distancedMoved = (speed*100)*((double)deltaTime/1000);
+	public void update(int deltaTime) {	
+		double distancedMoved;
+		if(lidars.get(0).current_distance < Config.minimumCenterDistanceToWall && !GameVariabales.is_init) {
+			speed = 0;
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			int rotateTo = lidars.get(1).current_distance < lidars.get(2).current_distance ? 2 : 1;
+			switch(rotateTo) {
+			case 1 : 
+				this.rotateLeft(deltaTime);
+				break;
+			case 2 : 
+				this.rotateRight(deltaTime);
+				break;
+			}
+			speed = 1;
+		}
+		distancedMoved = (speed*100)*((double)deltaTime/1000);
 		pointFromStart =  Utils.getPointByDistance(pointFromStart, rotation, distancedMoved);
 		double noiseToDistance = Utils.noiseBetween(Config.min_motion_accuracy,Config.max_motion_accuracy,false);
 		sensorOpticalFlow = Utils.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved*noiseToDistance);		

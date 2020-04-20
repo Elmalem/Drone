@@ -35,10 +35,6 @@ public class Simulator {
 		updatesCPU.addFunction(GameVariabales.drone::update);
 		updatesCPU.play();
 		
-		CPU unbrokenCPU = new CPU(200 , "unbroken");
-		unbrokenCPU.addFunction(Utils::unbroken);
-		unbrokenCPU.play();
-		
 		CPU infoCPU = new CPU(6,"update_info");
 		infoCPU.addFunction(this::updateInfo);
 		infoCPU.play();

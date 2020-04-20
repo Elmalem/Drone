@@ -7,6 +7,7 @@ public class Config {
 			new Point(73,68),
 			new Point(84,73),
 			new Point(92,100)};
+	public static final int minimumCenterDistanceToWall = 10;
 	public static final int map_index = 4;
 	public static final String drone_img_path = Config.imageSourcePath + "\\Maps\\drone_3_pixels.png";
 	public static final double max_distance_between_points = 100;
