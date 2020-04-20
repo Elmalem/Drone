@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
+/*
+ * Move to here some necessary functions
+ */
+
 public class Painter extends JComponent {
 	
 	private static final long serialVersionUID = 5899668374057151639L;

@@ -1,7 +1,14 @@
 package Auto_pack;
 import java.util.Random;
 
+/*
+ * This class present drone optical sensors
+ */
+
 public class Lidar {
+	/*
+	 * We already removed the drone variable because some OOP reasons
+	 */
 	double degrees;
 	double current_distance;
 	
@@ -30,6 +37,7 @@ public class Lidar {
 	public double getSimulationDistance(int deltaTime) {
 		Random ran= new Random();
 		double distanceInCM;
+		// The minimum center distance to all added by us
 		if(ran.nextFloat() <= 0.05f) { // 5% of the time, not getting an answer
 			distanceInCM = Config.minimumCenterDistanceToWall;
 		} else {

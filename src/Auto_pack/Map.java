@@ -5,7 +5,13 @@ import java.io.IOException;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
+/*
+ * Game area
+ */
+
 public class Map {
+	
+	// Move some untouched variables to other class 
 	public boolean[][] map;
 
 	public Map(String path) {

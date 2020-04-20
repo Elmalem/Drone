@@ -1,5 +1,4 @@
 package Auto_pack;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -7,6 +6,10 @@ import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+/*
+ * Responsible for displaying the data
+ */
 
 public class Visualizator {
 	

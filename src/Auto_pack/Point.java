@@ -1,6 +1,9 @@
 package Auto_pack;
-
 import java.text.DecimalFormat;
+
+/*
+ * The simple point class
+ */
 
 public class Point {
 	public double x;

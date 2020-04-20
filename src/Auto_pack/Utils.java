@@ -3,6 +3,10 @@ import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+/*
+ * Storage the static functionality of the program with the main algorithm function
+ */
+
 public class Utils {
 
 	public static void stopAllCPUS() {
@@ -188,6 +192,7 @@ public class Utils {
 					}
 				}
 
+				// Alarmed the drone entered the wall (should not happened)
 				if (GameVariabales.realMap.isCollide((int)(GameVariabales.drone.getPointOnMap().x), (int)(GameVariabales.drone.getPointOnMap().y))) {
 					stopCPUS();
 					GameVariabales.gameEnd = true;
@@ -406,7 +411,7 @@ public class Utils {
 		return Math.sqrt(x1 + y1);
 	}
 
-	/////////////////////////////////////////////////////////////
+	// Added by us
 	public static void gameOverMessage() {
 		JOptionPane.showMessageDialog(null, "Game Over!!!");
 	}

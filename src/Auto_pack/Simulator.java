@@ -1,6 +1,10 @@
 package Auto_pack;
 import java.awt.EventQueue;
 
+/*
+ * The main class to run the program
+ */
+
 public class Simulator {
 
 	public void start() {
@@ -22,6 +26,7 @@ public class Simulator {
 		ai_cpu.addFunction(Utils::updateAi);
 		ai_cpu.play();
 			
+		// Add this CPU to make the rotate updates program easier
 		CPU rotatingCPU = new CPU(200,"rotate");
 		rotatingCPU.addFunction(Utils::rotateUpdate);
 		rotatingCPU.play();

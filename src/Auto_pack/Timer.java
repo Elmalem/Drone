@@ -1,5 +1,8 @@
 package Auto_pack;
 
+/*
+ * Add simple clock for count the seconds with thread functionality
+ */
 public class Timer extends Thread{
 
 	private static int counterSeconds=0;

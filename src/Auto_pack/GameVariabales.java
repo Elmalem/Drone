@@ -2,6 +2,10 @@ package Auto_pack;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Storage of static data variables
+ */
+
 public class GameVariabales {
 	
 	public static enum PixelState {blocked,explored,unexplored,visited};

@@ -6,18 +6,22 @@ import java.util.List;
 
 public class Drone {
 	
+	// Location and movement variables
 	private double gyroRotation;
-	private Point sensorOpticalFlow;
-	private Point location;
-	public List<Lidar> lidars;
 	private double rotation;
 	private double speed;
+	// Location and movement functionality
+	private Point sensorOpticalFlow;
+	private Point location;
 	private CPU cpu;
+	//
+	public List<Lidar> lidars;
 	
 	public Drone() {
 		location = new Point();
 		sensorOpticalFlow = new Point();
 		lidars = new ArrayList<>();
+		// Changed
 		speed = 0.5;	
 		rotation = 0;
 		gyroRotation = rotation;	
@@ -47,6 +51,9 @@ public class Drone {
 	
 	public void update(int deltaTime) {	
 		double distancedMoved;
+		/*
+		 * Rearrange rotation before collision
+		 */
 		if(lidars.get(0).current_distance < Config.minimumCenterDistanceToWall && !GameVariabales.is_init) {
 			speed = 0;
 			try {
@@ -65,6 +72,7 @@ public class Drone {
 			}
 			speed = 1;
 		}
+		// 
 		distancedMoved = (speed*100)*((double)deltaTime/1000);
 		location =  Utils.getPointByDistance(location, rotation, distancedMoved);
 		double noiseToDistance = Utils.noiseBetween(Config.min_motion_accuracy,Config.max_motion_accuracy,false);
