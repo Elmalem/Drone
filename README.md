@@ -16,7 +16,7 @@ The Drone moves autonomously and now, after some improvements, doesn't get stuck
 
 * Download the project zip to your eclipse or intellij
 
-* In class "Config", change the "imageSourcePath" to yours (where you stor the maps and the drone jpg files).
+* In class "Config", change the "imageSourcePath" to yours (where you store the maps and the drone jpg files).
 
 * Click "Toogle Ai"
 
