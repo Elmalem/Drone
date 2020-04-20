@@ -7,7 +7,7 @@ public class GameVariabales {
 	public static enum PixelState {blocked,explored,unexplored,visited};
 	
 	public static void init() {
-		GameVariabales.realMap = new Map(Config.imageSourcePath +"\\Maps\\p1" + Config.map_index + ".png",Config.startPoints[Config.map_index-1]);		
+		GameVariabales.realMap = new Map(Config.imageSourcePath +"\\Maps\\p1" + Config.map_index + ".png");		
 		GameVariabales.degrees_left = new ArrayList<>();
 		GameVariabales.degrees_left_func =  new ArrayList<>();
 		GameVariabales.points = new ArrayList<Point>();	
@@ -18,7 +18,7 @@ public class GameVariabales {
 		GameVariabales.isRotating = 0;
 		Utils.initMap();		
 	}
-	
+	public static boolean return_home = false , toogleStop = true , toogleRealMap = true , toogleAI = false;
 	public static List<CPU> all_cpus = null;
 	public static Map realMap;
 	public static PixelState map[][];

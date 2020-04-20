@@ -2,18 +2,17 @@ package Auto_pack;
 import java.util.Random;
 
 public class Lidar {
-	Drone drone;
 	double degrees;
-	double current_distance = 0;
+	double current_distance;
 	
-	public Lidar(Drone drone,double degrees) {
-		this.drone = drone;
+	public Lidar(double degrees) {
 		this.degrees = degrees;
+		this.current_distance = 0;
 	}
 	
 	public double getDistance(int deltaTime) {
-		Point actualPointToShoot= drone.getPointOnMap();
-		double rotation = drone.getRotation() + degrees;
+		Point actualPointToShoot= GameVariabales.drone.getPointOnMap();
+		double rotation = GameVariabales.drone.getRotation() + degrees;
 		
 		double distanceInCM = 1;
 		while(distanceInCM <= Config.lidarLimit) { 

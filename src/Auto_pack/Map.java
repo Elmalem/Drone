@@ -7,11 +7,9 @@ import javax.imageio.ImageIO;
 
 public class Map {
 	public boolean[][] map;
-	public Point drone_start_point;
 
-	public Map(String path, Point drone_start_point) {
+	public Map(String path) {
 		try {
-			this.drone_start_point = drone_start_point;
 			BufferedImage img_map = ImageIO.read(new File(path));
 			this.map = render_map_from_image_to_boolean(img_map);
 		} catch (IOException e) {

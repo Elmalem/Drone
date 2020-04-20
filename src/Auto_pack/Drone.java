@@ -8,16 +8,14 @@ public class Drone {
 	
 	private double gyroRotation;
 	private Point sensorOpticalFlow;
-	private Point pointFromStart;
-	public Point startPoint;
+	private Point location;
 	public List<Lidar> lidars;
 	private double rotation;
 	private double speed;
 	private CPU cpu;
 	
 	public Drone() {
-		this.startPoint = GameVariabales.realMap.drone_start_point;
-		pointFromStart = new Point();
+		location = new Point();
 		sensorOpticalFlow = new Point();
 		lidars = new ArrayList<>();
 		speed = 0.5;	
@@ -36,14 +34,14 @@ public class Drone {
 	
 	
 	public void addLidar(int degrees) {
-		Lidar lidar = new Lidar(this,degrees);
+		Lidar lidar = new Lidar(degrees);
 		lidars.add(lidar);
 		cpu.addFunction(lidar::getSimulationDistance);
 	}
 	
 	public Point getPointOnMap() {
-		double x = startPoint.x + pointFromStart.x;
-		double y = startPoint.y + pointFromStart.y;
+		double x = Config.startPoints[Config.map_index-1].x + location.x;
+		double y = Config.startPoints[Config.map_index-1].y + location.y;
 		return new Point(x,y);
 	}
 	
@@ -68,7 +66,7 @@ public class Drone {
 			speed = 1;
 		}
 		distancedMoved = (speed*100)*((double)deltaTime/1000);
-		pointFromStart =  Utils.getPointByDistance(pointFromStart, rotation, distancedMoved);
+		location =  Utils.getPointByDistance(location, rotation, distancedMoved);
 		double noiseToDistance = Utils.noiseBetween(Config.min_motion_accuracy,Config.max_motion_accuracy,false);
 		sensorOpticalFlow = Utils.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved*noiseToDistance);		
 		double noiseToRotation = Utils.noiseBetween(Config.min_rotation_accuracy,Config.max_rotation_accuracy,false);
@@ -135,7 +133,7 @@ public class Drone {
 		DecimalFormat df = new DecimalFormat("#.####");		
 		String info = "<html>";
 		info += "Rotation: " + df.format(rotation) +"<br>";
-		info += "Location: " + pointFromStart +"<br>";
+		info += "Location: " + location +"<br>";
 		info += "gyroRotation: " + df.format(gyroRotation) +"<br>";
 		info += "sensorOpticalFlow: " + sensorOpticalFlow +"<br>";
 		info += "</html>";

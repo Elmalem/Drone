@@ -32,7 +32,7 @@ public class Utils {
 		Utils.resumeAllCPUS();
 	}
 
-	public static void play() {
+	public static void dronePlay() {
 		GameVariabales.drone.play();
 	}
 
@@ -87,7 +87,7 @@ public class Utils {
 	}
 
 	public static void ai(int deltaTime) {
-		if (!Simulator.toogleAI) {
+		if (!GameVariabales.toogleAI) {
 			return;
 		}
 
@@ -102,7 +102,7 @@ public class Utils {
 
 		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
 
-		if (Simulator.return_home) {
+		if (GameVariabales.return_home) {
 			if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) < Config.max_distance_between_points) {
 				if (GameVariabales.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
 						dronePoint) < Config.max_distance_between_points / 5) {
@@ -153,7 +153,7 @@ public class Utils {
 				if (a > 270 && b > 270) {
 
 					GameVariabales.is_lidars_max = true;
-					if (Simulator.return_home) {
+					if (GameVariabales.return_home) {
 						if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
 								dronePoint) < Config.max_distance_between_points) {
 							Utils.removeLastPoint();
@@ -178,7 +178,7 @@ public class Utils {
 
 					GameVariabales.spin_by = 90;
 
-					if (Simulator.return_home || dis_to_lidar1 < dis_to_lidar2) {
+					if (GameVariabales.return_home || dis_to_lidar1 < dis_to_lidar2) {
 						GameVariabales.spin_by *= -1;
 					}
 
@@ -236,7 +236,7 @@ public class Utils {
 		GameVariabales.droneStartingPoint = new Point(Config.map_size / 2, Config.map_size / 2);
 	}
 
-	// Unused
+	// Unused !!!
 	public static void doLeftRight() {
 
 		if (GameVariabales.is_finish) {
@@ -266,6 +266,14 @@ public class Utils {
 		Point fromPoint = new Point(dronePoint.x + GameVariabales.droneStartingPoint.x,
 				dronePoint.y + GameVariabales.droneStartingPoint.y);
 		Utils.setPixel(fromPoint.x, fromPoint.y, GameVariabales.PixelState.visited, GameVariabales.map);
+	}
+	
+	public static void updateInfo(int deltaTime) {
+		Utils.updateInfo(deltaTime , Visualizator.info_label_drone , Visualizator.info_label_config);
+	}
+	
+	public static void updateAi(int deltaTime) {
+		Utils.gameUpdates(deltaTime);
 	}
 
 	public static void updateMapByLidars() {

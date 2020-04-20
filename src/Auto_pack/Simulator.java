@@ -1,13 +1,8 @@
 package Auto_pack;
 import java.awt.EventQueue;
-import javax.swing.*;
 
 public class Simulator {
 
-	public static JFrame frame;
-	public static JLabel info_label_drone , info_label_config;
-	public static boolean return_home = false , toogleStop = true , toogleRealMap = true , toogleAI = false;
-	
 	public void start() {
 		
 		Visualizator.initialize();
@@ -15,20 +10,20 @@ public class Simulator {
 		
 		Painter painter = new Painter();
 		painter.setBounds(0, 0, 2000, 2000);
-		Simulator.frame.getContentPane().add(painter);
+		Visualizator.frame.getContentPane().add(painter);
 		
-		Utils.play();
+		Utils.dronePlay();
 		
 		CPU painterCPU = new CPU(200,"painter"); // 60 FPS painter
-		painterCPU.addFunction(Simulator.frame::repaint);
+		painterCPU.addFunction(Visualizator.frame::repaint);
 		painterCPU.play();
 		
 		CPU ai_cpu = new CPU(200,"Auto_AI");
-		ai_cpu.addFunction(this::updateAi);
+		ai_cpu.addFunction(Utils::updateAi);
 		ai_cpu.play();
 			
 		CPU rotatingCPU = new CPU(200,"rotate");
-		rotatingCPU.addFunction(this::rotateUpdate);
+		rotatingCPU.addFunction(Utils::rotateUpdate);
 		rotatingCPU.play();
 		
 		CPU updatesCPU = new CPU(60,"updates");
@@ -36,7 +31,7 @@ public class Simulator {
 		updatesCPU.play();
 		
 		CPU infoCPU = new CPU(6,"update_info");
-		infoCPU.addFunction(this::updateInfo);
+		infoCPU.addFunction(Utils::updateInfo);
 		infoCPU.play();
 		
 	}
@@ -47,7 +42,7 @@ public class Simulator {
 				try {
 					Simulator player = new Simulator();
 					player.start();
-					Simulator.frame.setVisible(true);
+					Visualizator.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -55,17 +50,5 @@ public class Simulator {
 		});
 	}
 
-	public void updateInfo(int deltaTime) {
-		Utils.updateInfo(deltaTime , info_label_drone , info_label_config);
-	}
-	
-	public void rotateUpdate(int deltaTime) {
-		Utils.rotateUpdate(deltaTime);
-	}
-	
-	public void updateAi(int deltaTime) {
-		Utils.gameUpdates(deltaTime);
-	}
 
-	
 }
