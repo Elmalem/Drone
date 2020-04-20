@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 public class Map {
-	boolean[][] map;
-	Point drone_start_point;
+	public boolean[][] map;
+	public Point drone_start_point;
 
 	public Map(String path, Point drone_start_point) {
 		try {

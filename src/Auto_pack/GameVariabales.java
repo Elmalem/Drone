@@ -31,7 +31,6 @@ public class GameVariabales {
 	public static ArrayList<Func> degrees_left_func;
 	public static boolean isSpeedUp = false;
 	public static Graph mGraph = new Graph();
-	public static CPU ai_cpu;
 	public static boolean gameEnd =false; 
 	public static boolean is_init = true;
 	public static double lastFrontLidarDis = 0;

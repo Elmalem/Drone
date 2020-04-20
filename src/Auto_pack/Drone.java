@@ -20,7 +20,7 @@ public class Drone {
 		pointFromStart = new Point();
 		sensorOpticalFlow = new Point();
 		lidars = new ArrayList<>();
-		speed = 0.2;	
+		speed = 0.75;	
 		rotation = 0;
 		gyroRotation = rotation;	
 		cpu = new CPU(100,"Drone");
