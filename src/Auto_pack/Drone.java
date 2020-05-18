@@ -15,7 +15,7 @@ public class Drone {
 	private Point location;
 	private CPU cpu;
 	//
-	public List<Lidar> lidars;
+	private List<Lidar> lidars;
 	
 	public Drone() {
 		location = new Point();
@@ -44,8 +44,8 @@ public class Drone {
 	}
 	
 	public Point getPointOnMap() {
-		double x = Config.startPoints[Config.map_index-1].x + location.x;
-		double y = Config.startPoints[Config.map_index-1].y + location.y;
+		double x = Config.startPoints[Config.map_index-1].getX() + location.getX();
+		double y = Config.startPoints[Config.map_index-1].getY() + location.getY();
 		return new Point(x,y);
 	}
 	
@@ -54,14 +54,14 @@ public class Drone {
 		/*
 		 * Rearrange rotation before collision
 		 */
-		if(lidars.get(0).current_distance < Config.minimumCenterDistanceToWall && !GameVariabales.is_init) {
+		if(lidars.get(0).getCurrentDistance() < Config.minimumCenterDistanceToWall && !GameVariabales.is_init) {
 			speed = 0;
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			int rotateTo = lidars.get(1).current_distance < lidars.get(2).current_distance ? 2 : 1;
+			int rotateTo = lidars.get(1).getCurrentDistance() < lidars.get(2).getCurrentDistance() ? 2 : 1;
 			switch(rotateTo) {
 			case 1 : 
 				this.rotateLeft(deltaTime);
@@ -124,6 +124,10 @@ public class Drone {
 		if(speed > Config.max_speed) {
 			speed =Config.max_speed;
 		}
+	}
+	
+	public List<Lidar> getLidars(){
+		return this.lidars;
 	}
 	
 	public void slowDown(int deltaTime) {

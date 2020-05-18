@@ -16,8 +16,8 @@ public class Visualizator {
 	public static JFrame frame;
 	public static JLabel info_label_drone , info_label_config;
 	
-	final static ArrayList<Integer> ButtonHeights = new ArrayList<Integer>(Arrays.asList(0 , 30 , 60 , 90 , 120 , 150 , 180 , 210));
-	final static ArrayList<Integer> ButtonWeights = new ArrayList<Integer>(Arrays.asList(1400 , 1512 , 1624));
+	private final static ArrayList<Integer> ButtonHeights = new ArrayList<Integer>(Arrays.asList(0 , 30 , 60 , 90 , 120 , 150 , 180 , 210));
+	private final static ArrayList<Integer> ButtonWeights = new ArrayList<Integer>(Arrays.asList(1400 , 1512 , 1624));
 	
 	public static void initialize() {
 		Visualizator.frame = new JFrame();
@@ -33,7 +33,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {					 
-				  Timer.flag=false;
+				  Timer.setFlag(false);
 				  Utils.stopAllCPUS();
 				  GameVariabales.toogleStop = !GameVariabales.toogleStop;
 			  }
@@ -46,7 +46,7 @@ public class Visualizator {
 		{
 			  public void actionPerformed(ActionEvent e)
 			  {
-				  Timer.flag=true;
+				  Timer.setFlag(true);
 				  Utils.resumeAllCPUS();
 				  GameVariabales.toogleStop = !GameVariabales.toogleStop;
 			  }

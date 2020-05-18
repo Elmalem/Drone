@@ -10,20 +10,20 @@ import org.jgrapht.graph.DefaultEdge;
 
 public class Graph {
 
-	DefaultDirectedGraph<Point, DefaultEdge> g;
+	private DefaultDirectedGraph<Point, DefaultEdge> graph;
 	
     public Graph() {
-    	g = new DefaultDirectedGraph<Point, DefaultEdge>(DefaultEdge.class);
+    	graph = new DefaultDirectedGraph<Point, DefaultEdge>(DefaultEdge.class);
     }
     public void addVertex(Point name) {
         Point last_vertex = null;
-        Set<Point> all = g.vertexSet();
+        Set<Point> all = graph.vertexSet();
         if(all.size() > 0) {
         	last_vertex = getLastElement(all);
         }
-        g.addVertex(name);
+        graph.addVertex(name);
         if(last_vertex != null) 
-        	g.addEdge(last_vertex, name);
+        	graph.addEdge(last_vertex, name);
     }
     
     public Point getLastElement(Set<Point> c) {
@@ -36,16 +36,16 @@ public class Graph {
         return last;
     }
     public void addEdge(Point v1,Point v2) {
-        g.addEdge(v1, v2);
+    	graph.addEdge(v1, v2);
     }
 
     public String getOutput() {
-    	return g.toString();
+    	return graph.toString();
     }
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	public void getSpanningTree() {
-        KruskalMinimumSpanningTree k = new KruskalMinimumSpanningTree(g);
+        KruskalMinimumSpanningTree k = new KruskalMinimumSpanningTree(graph);
         System.out.println(k.getSpanningTree().toString());
     }
 

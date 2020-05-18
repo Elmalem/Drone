@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 public class Map {
 	
 	// Move some untouched variables to other class 
-	public boolean[][] map;
+	private boolean[][] map;
 
 	public Map(String path) {
 		try {
@@ -21,6 +21,10 @@ public class Map {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean[][] get(){
+		return this.map;
 	}
 
 	private boolean[][] render_map_from_image_to_boolean(BufferedImage map_img) {

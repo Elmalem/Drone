@@ -9,12 +9,20 @@ public class Lidar {
 	/*
 	 * We already removed the drone variable because some OOP reasons
 	 */
-	double degrees;
-	double current_distance;
+	private double degrees;
+	private double current_distance;
 	
 	public Lidar(double degrees) {
 		this.degrees = degrees;
 		this.current_distance = 0;
+	}
+	
+	public double getDegrees() {
+		return this.degrees;
+	}
+	
+	public double getCurrentDistance() {
+		return this.current_distance;
 	}
 	
 	public double getDistance(int deltaTime) {
@@ -24,7 +32,7 @@ public class Lidar {
 		double distanceInCM = 1;
 		while(distanceInCM <= Config.lidarLimit) { 
 			Point p = Utils.getPointByDistance(actualPointToShoot, rotation, distanceInCM);
-			if(GameVariabales.realMap.isCollide((int)p.x,(int)p.y)) {
+			if(GameVariabales.realMap.isCollide((int)p.getX(),(int)p.getY())) {
 				break;
 		}
 			distanceInCM++;

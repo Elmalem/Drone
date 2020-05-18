@@ -8,12 +8,12 @@ import java.util.function.IntConsumer;
  */
 
 public class CPU {
-	public int hz; 
-	public List<IntConsumer> functions_list;
-	public boolean isPlay;
+	private int hz; 
+	private List<IntConsumer> functions_list;
+	private boolean isPlay;
 	private long elapsedMilli;
 	private boolean isPlayedBeforeStop;
-	Thread thread;
+	private Thread thread;
 	
 	public CPU(int hz,String name) {
 		functions_list = new ArrayList<>();
@@ -60,6 +60,10 @@ public class CPU {
 	public void stop() {
 		isPlay = false;
 		isPlayedBeforeStop = false;
+	}
+	
+	public void setPlay() {
+		this.isPlay = !this.isPlay;
 	}
 	
 	public long getElapsedMilli() {

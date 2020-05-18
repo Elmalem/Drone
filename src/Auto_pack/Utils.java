@@ -11,7 +11,7 @@ public class Utils {
 
 	public static void stopAllCPUS() {
 		for (int i = 0; i < GameVariabales.all_cpus.size(); i++) {
-			GameVariabales.all_cpus.get(i).isPlay = false;
+			GameVariabales.all_cpus.get(i).setPlay();
 		}
 	}
 
@@ -45,8 +45,8 @@ public class Utils {
 		double radians = Math.PI * (rotation / 180);
 
 		double i = distance / Config.CMPerPixel;
-		double xi = fromPoint.x + Math.cos(radians) * i;
-		double yi = fromPoint.y + Math.sin(radians) * i;
+		double xi = fromPoint.getX() + Math.cos(radians) * i;
+		double yi = fromPoint.getY() + Math.sin(radians) * i;
 
 		return new Point(xi, yi);
 	}
@@ -83,8 +83,8 @@ public class Utils {
 	}
 
 	public static double getRotationBetweenPoints(Point from, Point to) {
-		double y1 = from.y - to.y;
-		double x1 = from.x - to.x;
+		double y1 = from.getY() - to.getY();
+		double x1 = from.getX() - to.getX();
 		double radians = Math.atan(y1 / x1);
 		double rotation = radians * 180 / Math.PI;
 		return rotation;
@@ -127,19 +127,19 @@ public class Utils {
 
 		if (!GameVariabales.is_risky) {
 
-			Lidar lidar0 = GameVariabales.drone.lidars.get(0);
-			if (lidar0.current_distance <= Config.max_risky_distance) {
+			Lidar lidar0 = GameVariabales.drone.getLidars().get(0);
+			if (lidar0.getCurrentDistance() <= Config.max_risky_distance) {
 				GameVariabales.is_risky = true;
-				GameVariabales.risky_dis = lidar0.current_distance;
+				GameVariabales.risky_dis = lidar0.getCurrentDistance();
 			}
 
-			Lidar lidar1 = GameVariabales.drone.lidars.get(1);
-			if (lidar1.current_distance <= Config.max_risky_distance / 3) {
+			Lidar lidar1 = GameVariabales.drone.getLidars().get(1);
+			if (lidar1.getCurrentDistance() <= Config.max_risky_distance / 3) {
 				GameVariabales.is_risky = true;
 			}
 
-			Lidar lidar2 = GameVariabales.drone.lidars.get(2);
-			if (lidar2.current_distance <= Config.max_risky_distance / 3) {
+			Lidar lidar2 = GameVariabales.drone.getLidars().get(2);
+			if (lidar2.getCurrentDistance() <= Config.max_risky_distance / 3) {
 				GameVariabales.is_risky = true;
 			}
 
@@ -148,11 +148,11 @@ public class Utils {
 
 				GameVariabales.try_to_escape = true;
 
-				Lidar lidar1 = GameVariabales.drone.lidars.get(1);
-				double a = lidar1.current_distance;
+				Lidar lidar1 = GameVariabales.drone.getLidars().get(1);
+				double a = lidar1.getCurrentDistance();
 
-				Lidar lidar2 = GameVariabales.drone.lidars.get(2);
-				double b = lidar2.current_distance;
+				Lidar lidar2 = GameVariabales.drone.getLidars().get(2);
+				double b = lidar2.getCurrentDistance();
 
 				if (a > 270 && b > 270) {
 
@@ -171,11 +171,11 @@ public class Utils {
 					}
 
 					Point l1 = Utils.getPointByDistance(dronePoint,
-							GameVariabales.drone.lidars.get(1).degrees + GameVariabales.drone.getGyroRotation(),
-							GameVariabales.drone.lidars.get(1).current_distance);
+							GameVariabales.drone.getLidars().get(1).getDegrees() + GameVariabales.drone.getGyroRotation(),
+							GameVariabales.drone.getLidars().get(1).getCurrentDistance());
 					Point l2 = Utils.getPointByDistance(dronePoint,
-							GameVariabales.drone.lidars.get(2).degrees + GameVariabales.drone.getGyroRotation(),
-							GameVariabales.drone.lidars.get(2).current_distance);
+							GameVariabales.drone.getLidars().get(2).getDegrees() + GameVariabales.drone.getGyroRotation(),
+							GameVariabales.drone.getLidars().get(2).getCurrentDistance());
 					Point last_point = Utils.getAvgLastPoint();
 					double dis_to_lidar1 = Utils.getDistanceBetweenPoints(last_point, l1);
 					double dis_to_lidar2 = Utils.getDistanceBetweenPoints(last_point, l2);
@@ -193,7 +193,7 @@ public class Utils {
 				}
 
 				// Alarmed the drone entered the wall (should not happened)
-				if (GameVariabales.realMap.isCollide((int)(GameVariabales.drone.getPointOnMap().x), (int)(GameVariabales.drone.getPointOnMap().y))) {
+				if (GameVariabales.realMap.isCollide((int)(GameVariabales.drone.getPointOnMap().getX()), (int)(GameVariabales.drone.getPointOnMap().getY()))) {
 					stopCPUS();
 					GameVariabales.gameEnd = true;
 					gameOverMessage();
@@ -268,9 +268,9 @@ public class Utils {
 
 	public static void updateVisited() {
 		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
-		Point fromPoint = new Point(dronePoint.x + GameVariabales.droneStartingPoint.x,
-				dronePoint.y + GameVariabales.droneStartingPoint.y);
-		Utils.setPixel(fromPoint.x, fromPoint.y, GameVariabales.PixelState.visited, GameVariabales.map);
+		Point fromPoint = new Point(dronePoint.getX() + GameVariabales.droneStartingPoint.getX(),
+				dronePoint.getY() + GameVariabales.droneStartingPoint.getY());
+		Utils.setPixel(fromPoint.getX(), fromPoint.getY(), GameVariabales.PixelState.visited, GameVariabales.map);
 	}
 	
 	public static void updateInfo(int deltaTime) {
@@ -283,20 +283,20 @@ public class Utils {
 
 	public static void updateMapByLidars() {
 		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
-		Point fromPoint = new Point(dronePoint.x + GameVariabales.droneStartingPoint.x,
-				dronePoint.y + GameVariabales.droneStartingPoint.y);
+		Point fromPoint = new Point(dronePoint.getX() + GameVariabales.droneStartingPoint.getX(),
+				dronePoint.getY() + GameVariabales.droneStartingPoint.getY());
 
-		for (int i = 0; i < GameVariabales.drone.lidars.size(); i++) {
-			Lidar lidar = GameVariabales.drone.lidars.get(i);
-			double rotation = GameVariabales.drone.getGyroRotation() + lidar.degrees;
-			for (int distanceInCM = 0; distanceInCM < lidar.current_distance; distanceInCM++) {
+		for (int i = 0; i < GameVariabales.drone.getLidars().size(); i++) {
+			Lidar lidar = GameVariabales.drone.getLidars().get(i);
+			double rotation = GameVariabales.drone.getGyroRotation() + lidar.getDegrees();
+			for (int distanceInCM = 0; distanceInCM < lidar.getCurrentDistance(); distanceInCM++) {
 				Point p = Utils.getPointByDistance(fromPoint, rotation, distanceInCM);
-				Utils.setPixel(p.x, p.y, GameVariabales.PixelState.explored, GameVariabales.map);
+				Utils.setPixel(p.getX(), p.getY(), GameVariabales.PixelState.explored, GameVariabales.map);
 			}
 
-			if (lidar.current_distance > 0 && lidar.current_distance < Config.lidarLimit - Config.lidarNoise) {
-				Point p = Utils.getPointByDistance(fromPoint, rotation, lidar.current_distance);
-				Utils.setPixel(p.x, p.y, GameVariabales.PixelState.blocked, GameVariabales.map);
+			if (lidar.getCurrentDistance() > 0 && lidar.getCurrentDistance() < Config.lidarLimit - Config.lidarNoise) {
+				Point p = Utils.getPointByDistance(fromPoint, rotation, lidar.getCurrentDistance());
+				Utils.setPixel(p.getX(), p.getY(), GameVariabales.PixelState.blocked, GameVariabales.map);
 			}
 		}
 	}
@@ -402,12 +402,12 @@ public class Utils {
 		}
 		Point p1 = GameVariabales.points.get(GameVariabales.points.size() - 1);
 		Point p2 = GameVariabales.points.get(GameVariabales.points.size() - 2);
-		return new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+		return new Point((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
 	}
 
 	public static double getDistanceBetweenPoints(Point from, Point to) {
-		double x1 = (from.x - to.x) * (from.x - to.x);
-		double y1 = (from.y - to.y) * (from.y - to.y);
+		double x1 = (from.getX() - to.getX()) * (from.getX() - to.getX());
+		double y1 = (from.getY() - to.getY()) * (from.getY() - to.getY());
 		return Math.sqrt(x1 + y1);
 	}
 
