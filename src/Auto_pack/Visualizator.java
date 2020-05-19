@@ -14,7 +14,8 @@ import javax.swing.JLabel;
 public class Visualizator {
 	
 	public static JFrame frame;
-	public static JLabel info_label_drone , info_label_config;
+	public static JFrame graphFrame;
+	public static JLabel info_label_drone , info_label_config , graphInfo;
 	
 	private final static ArrayList<Integer> ButtonHeights = new ArrayList<Integer>(Arrays.asList(0 , 30 , 60 , 90 , 120 , 150 , 180 , 210));
 	private final static ArrayList<Integer> ButtonWeights = new ArrayList<Integer>(Arrays.asList(1400 , 1512 , 1624));
@@ -26,6 +27,12 @@ public class Visualizator {
 		Visualizator.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Visualizator.frame.getContentPane().setLayout(null);
 		
+		Visualizator.graphFrame = new JFrame();
+		Visualizator.graphFrame.setSize(1800,700);
+		Visualizator.graphFrame.setTitle("Graph");
+		Visualizator.graphFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Visualizator.graphFrame.getContentPane().setLayout(null);
+
 		Timer timer =new Timer();
 		
 		JButton stopBtn = new JButton("Pause");
@@ -76,6 +83,17 @@ public class Visualizator {
 		});
 		toogleAIBtn.setBounds(1512, 300, 150, 50);
 		Visualizator.frame.getContentPane().add(toogleAIBtn);
+		
+		JButton graphButton = new JButton("Display Graph");
+		graphButton.addActionListener(new ActionListener()
+		{
+			  public void actionPerformed(ActionEvent e)
+			  {
+				  Visualizator.graphFrame.setVisible(true);
+			  }
+		});
+		graphButton.setBounds(1512, 350, 150, 50);
+		Visualizator.frame.getContentPane().add(graphButton);
 
 		JButton returnBtn = new JButton("Return Home");
 		returnBtn.addActionListener(new ActionListener()
@@ -211,6 +229,10 @@ public class Visualizator {
 		Visualizator.info_label_drone.setBounds(1450, 500, 300, 200);
 		Visualizator.frame.getContentPane().add(Visualizator.info_label_drone);
 	
+		Visualizator.graphInfo = new JLabel();
+		Visualizator.graphInfo.setBounds(0, 0, 1800, 750);
+		Visualizator.graphFrame.getContentPane().add(Visualizator.graphInfo);
+		
 		Visualizator.info_label_config = new JLabel();
 		Visualizator.info_label_config.setBounds(1450, 400, 300, 200);
 		Visualizator.frame.getContentPane().add(Visualizator.info_label_config);

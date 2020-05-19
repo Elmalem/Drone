@@ -1,5 +1,4 @@
 package Auto_pack;
-import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +15,18 @@ public class Drone {
 	private CPU cpu;
 	//
 	private List<Lidar> lidars;
-	
+	//
+	private Battery battery;
+
 	public Drone() {
-		location = new Point();
-		sensorOpticalFlow = new Point();
-		lidars = new ArrayList<>();
-		// Changed
-		speed = 0.5;	
-		rotation = 0;
-		gyroRotation = rotation;	
-		cpu = new CPU(100,"Drone");
+		this.location = new Point();
+		this.sensorOpticalFlow = new Point();
+		this.lidars = new ArrayList<>();
+		this.speed = 0.5;	
+		this.rotation = 0;
+		this.gyroRotation = rotation;	
+		this.cpu = new CPU(100,"Drone");
+		this.setBattery(new Battery());
 	}
 	
 	public void play() {
@@ -137,10 +138,6 @@ public class Drone {
 		}
 	}
 	
-	boolean initPaint = false;
-	BufferedImage mImage;
-	int j=0;
-	
 	public String getInfoHTML() {
 		DecimalFormat df = new DecimalFormat("#.####");		
 		String info = "<html>";
@@ -150,5 +147,13 @@ public class Drone {
 		info += "sensorOpticalFlow: " + sensorOpticalFlow +"<br>";
 		info += "</html>";
 		return info;
+	}
+
+	public Battery getBattery() {
+		return battery;
+	}
+
+	public void setBattery(Battery battery) {
+		this.battery = battery;
 	}
 }

@@ -1,52 +1,37 @@
 package Auto_pack;
-import java.util.Set;
-import org.jgrapht.graph.*;
-import org.jgrapht.alg.spanning.*;
-import org.jgrapht.graph.DefaultEdge;
+import java.util.ArrayList;
 
-/*
- * Unchanged
- */
-
-public class Graph {
-
-	private DefaultDirectedGraph<Point, DefaultEdge> graph;
+class Graph {
 	
-    public Graph() {
-    	graph = new DefaultDirectedGraph<Point, DefaultEdge>(DefaultEdge.class);
-    }
-    public void addVertex(Point name) {
-        Point last_vertex = null;
-        Set<Point> all = graph.vertexSet();
-        if(all.size() > 0) {
-        	last_vertex = getLastElement(all);
-        }
-        graph.addVertex(name);
-        if(last_vertex != null) 
-        	graph.addEdge(last_vertex, name);
-    }
-    
-    public Point getLastElement(Set<Point> c) {
-    	Point last = null;
-    	if(c.size() > 0) {
-    		for(Point x : c) {
-    			last = x;
-    		}
-    	}
-        return last;
-    }
-    public void addEdge(Point v1,Point v2) {
-    	graph.addEdge(v1, v2);
-    }
-
-    public String getOutput() {
-    	return graph.toString();
-    }
-    
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public void getSpanningTree() {
-        KruskalMinimumSpanningTree k = new KruskalMinimumSpanningTree(graph);
-        System.out.println(k.getSpanningTree().toString());
-    }
-
+	private ArrayList<Edge> edges;
+	private ArrayList<Point> vertex;
+	
+	Graph (Point init) {
+		this.edges = new ArrayList<Edge>();
+		this.vertex = new ArrayList<Point>();
+		this.vertex.add(init);
+	}
+	
+	public void addVertex(Point point) {
+		this.vertex.add(point);
+		Point temp = vertex.get(vertex.size() - 2);
+		this.addEdge(temp , point , Utils.getDistanceBetweenPoints(point, temp));
+	}
+	
+	private void addEdge(Point a , Point b , double weight) {
+		this.edges.add(new Edge(a , b , weight));
+	}
+	
+	public ArrayList<Edge> getEdges(){
+		return this.edges;
+	}
+	
+	public String toHtmlString() {
+		String str = "<html> Graph";
+		for (int i = 0; i < edges.size(); i++) {
+			str += "<BR>" + edges.get(i).toString();
+		} 
+		return str += "</html>";
+	}
+	
 }

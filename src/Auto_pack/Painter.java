@@ -1,8 +1,6 @@
 package Auto_pack;
 import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 /*
@@ -16,16 +14,6 @@ public class Painter extends JComponent {
 	public Painter() {}
 	
 	public static void paintDrone(Graphics g , Drone drone) {
-		if(!drone.initPaint) {
-			try {
-				File f = new File(Config.drone_img_path);
-				drone.mImage = ImageIO.read(f);
-				drone.initPaint = true;
-			} catch(Exception ex) {
-				
-			}
-		}
-
 		for(int i=0 ;i < drone.getLidars().size() ;i++) {
 			Lidar lidar = drone.getLidars().get(i);
 			Painter.paintLidar(g,lidar);
@@ -33,7 +21,7 @@ public class Painter extends JComponent {
 	}
 	
 	public static void paintLidar(Graphics g , Lidar lidar) {
-		Point actualPointToShoot= GameVariabales.drone.getPointOnMap();
+		Point actualPointToShoot = GameVariabales.drone.getPointOnMap();
 		double fromRotation = GameVariabales.drone.getRotation()+lidar.getDegrees();
 		Point to = Utils.getPointByDistance(actualPointToShoot, fromRotation, lidar.getCurrentDistance());
 		g.drawLine((int)actualPointToShoot.getX(),(int)actualPointToShoot.getY(), (int)to.getX(), (int)to.getY());

@@ -29,12 +29,24 @@ public class GameVariabales {
 		painter.setBounds(0, 0, 2000, 2000);
 		Visualizator.frame.getContentPane().add(painter);
 		
+		GraphPainter graphPainter = new GraphPainter();
+		graphPainter.setBounds(0, 0, 2000, 2000);
+		Visualizator.graphFrame.getContentPane().add(graphPainter);
+		
 		Utils.dronePlay();
 
 		CPU painterCPU = new CPU(200, "painter"); // 60 FPS painter
 		painterCPU.addFunction(Visualizator.frame::repaint);
 		painterCPU.play();
+		
+		CPU painterGraphCPU = new CPU(200, "painter graph"); // 60 FPS painter
+		painterGraphCPU.addFunction(Visualizator.graphFrame::repaint);
+		painterGraphCPU.play();
 
+		CPU batteryCPU = new CPU(200 , "battery cpu");
+		batteryCPU.addFunction(Utils::batteryUpdate);
+		batteryCPU.play();
+		
 		CPU ai_cpu = new CPU(200, "Auto_AI");
 		ai_cpu.addFunction(Utils::updateAi);
 		ai_cpu.play();
@@ -66,7 +78,7 @@ public class GameVariabales {
 	public static ArrayList<Double> degrees_left;
 	public static ArrayList<Func> degrees_left_func;
 	public static boolean isSpeedUp = false;
-	public static Graph mGraph = new Graph();
+	public static Graph graph;
 	public static boolean gameEnd = false;
 	public static boolean is_init = true;
 	public static double lastFrontLidarDis = 0;

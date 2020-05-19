@@ -1,4 +1,6 @@
 package Auto_pack;
+
+import java.text.DecimalFormat;
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,11 +23,15 @@ public class Utils {
 		}
 	}
 
-	public static void updateInfo(int deltaTime, JLabel info_label, JLabel info_label2) {
+	public static void updateInfo(int deltaTime, JLabel info_label, JLabel info_label2, JLabel graphInfo) {
+		DecimalFormat dfff = new DecimalFormat("#.##");
 		info_label.setText(GameVariabales.drone.getInfoHTML());
 		info_label2.setText("<html>" + String.valueOf(GameVariabales.counter) + " <BR>isRisky:"
 				+ String.valueOf(GameVariabales.is_risky) + "<BR>" + String.valueOf(GameVariabales.risky_dis)
-				+ "<BR> Time : " + String.valueOf(Timer.getTimeBySeconds()) + "</html>");
+				+ "<BR> Time : " + String.valueOf(Timer.getTimeBySeconds()) + "<BR> Battery : "
+				+ String.valueOf(dfff.format(GameVariabales.drone.getBattery().getStamina())) + "</html>");
+		if (GameVariabales.graph != null)
+			graphInfo.setText(GameVariabales.graph.toHtmlString());
 	}
 
 	public static void stopCPUS() {
@@ -99,14 +105,14 @@ public class Utils {
 			Utils.speedUp();
 			Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
 			GameVariabales.init_point = new Point(dronePoint);
+			GameVariabales.graph = new Graph(GameVariabales.drone.getPointOnMap());
 			GameVariabales.points.add(dronePoint);
-			GameVariabales.mGraph.addVertex(dronePoint);
 			GameVariabales.is_init = false;
 		}
 
 		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
 
-		if (GameVariabales.return_home) {
+		if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50) {
 			if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) < Config.max_distance_between_points) {
 				if (GameVariabales.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
 						dronePoint) < Config.max_distance_between_points / 5) {
@@ -116,11 +122,7 @@ public class Utils {
 				}
 			}
 		} else {
-			if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
-					dronePoint) >= Config.max_distance_between_points) {
-				GameVariabales.points.add(dronePoint);
-				GameVariabales.mGraph.addVertex(dronePoint);
-			}
+			Utils.interestedPoints(dronePoint);
 		}
 
 		GameVariabales.spin_by = Config.max_angle_risky;
@@ -157,24 +159,22 @@ public class Utils {
 				if (a > 270 && b > 270) {
 
 					GameVariabales.is_lidars_max = true;
-					if (GameVariabales.return_home) {
+					if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50) {
 						if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
 								dronePoint) < Config.max_distance_between_points) {
 							Utils.removeLastPoint();
 						}
 					} else {
-						if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
-								dronePoint) >= Config.max_distance_between_points) {
-							GameVariabales.points.add(dronePoint);
-							GameVariabales.mGraph.addVertex(dronePoint);
-						}
+						Utils.interestedPoints(dronePoint);
 					}
 
 					Point l1 = Utils.getPointByDistance(dronePoint,
-							GameVariabales.drone.getLidars().get(1).getDegrees() + GameVariabales.drone.getGyroRotation(),
+							GameVariabales.drone.getLidars().get(1).getDegrees()
+									+ GameVariabales.drone.getGyroRotation(),
 							GameVariabales.drone.getLidars().get(1).getCurrentDistance());
 					Point l2 = Utils.getPointByDistance(dronePoint,
-							GameVariabales.drone.getLidars().get(2).getDegrees() + GameVariabales.drone.getGyroRotation(),
+							GameVariabales.drone.getLidars().get(2).getDegrees()
+									+ GameVariabales.drone.getGyroRotation(),
 							GameVariabales.drone.getLidars().get(2).getCurrentDistance());
 					Point last_point = Utils.getAvgLastPoint();
 					double dis_to_lidar1 = Utils.getDistanceBetweenPoints(last_point, l1);
@@ -182,7 +182,8 @@ public class Utils {
 
 					GameVariabales.spin_by = 90;
 
-					if (GameVariabales.return_home || dis_to_lidar1 < dis_to_lidar2) {
+					if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50
+							|| dis_to_lidar1 < dis_to_lidar2) {
 						GameVariabales.spin_by *= -1;
 					}
 
@@ -193,7 +194,8 @@ public class Utils {
 				}
 
 				// Alarmed the drone entered the wall (should not happened)
-				if (GameVariabales.realMap.isCollide((int)(GameVariabales.drone.getPointOnMap().getX()), (int)(GameVariabales.drone.getPointOnMap().getY()))) {
+				if (GameVariabales.realMap.isCollide((int) (GameVariabales.drone.getPointOnMap().getX()),
+						(int) (GameVariabales.drone.getPointOnMap().getY()))) {
 					stopCPUS();
 					GameVariabales.gameEnd = true;
 					gameOverMessage();
@@ -211,6 +213,31 @@ public class Utils {
 		}
 	}
 
+	public static void interestedPoints(Point dronePoint) {
+		int importantDistToWall = 10;
+		int minDistanceBetweenImportantPoints = 20;
+		if (((GameVariabales.drone.getLidars().get(0).getCurrentDistance() < 20
+				&& GameVariabales.drone.getLidars().get(1).getCurrentDistance() < importantDistToWall)
+				|| (GameVariabales.drone.getLidars().get(0).getCurrentDistance() < 20
+						&& GameVariabales.drone.getLidars().get(2).getCurrentDistance() < importantDistToWall)
+				|| (GameVariabales.drone.getLidars().get(1).getCurrentDistance() < importantDistToWall
+						&& GameVariabales.drone.getLidars().get(2).getCurrentDistance() < importantDistToWall))
+				&& Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points
+						.get(GameVariabales.points.size() - 1)) > minDistanceBetweenImportantPoints) {
+			GameVariabales.points.add(dronePoint);
+			GameVariabales.graph.addVertex(GameVariabales.drone.getPointOnMap());
+		}
+	}
+
+	public static void batteryUpdate(int deltaTime) {
+		GameVariabales.drone.getBattery().setStamina();
+		try {
+			Thread.sleep(1000);
+		} catch (Exception e) {
+			System.err.print(e);
+		}
+	}
+
 	public static void rotateUpdate(int deltaTime) {
 		if (GameVariabales.isRotating != 0) {
 			Utils.updateRotating(deltaTime);
@@ -220,7 +247,7 @@ public class Utils {
 	public static void gameUpdates(int deltaTime) {
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
-		Utils.ai(deltaTime);	
+		Utils.ai(deltaTime);
 		if (GameVariabales.isSpeedUp) {
 			GameVariabales.drone.speedUp(deltaTime);
 		} else {
@@ -272,11 +299,12 @@ public class Utils {
 				dronePoint.getY() + GameVariabales.droneStartingPoint.getY());
 		Utils.setPixel(fromPoint.getX(), fromPoint.getY(), GameVariabales.PixelState.visited, GameVariabales.map);
 	}
-	
+
 	public static void updateInfo(int deltaTime) {
-		Utils.updateInfo(deltaTime , Visualizator.info_label_drone , Visualizator.info_label_config);
+		Utils.updateInfo(deltaTime, Visualizator.info_label_drone, Visualizator.info_label_config,
+				Visualizator.graphInfo);
 	}
-	
+
 	public static void updateAi(int deltaTime) {
 		Utils.gameUpdates(deltaTime);
 	}
@@ -411,7 +439,6 @@ public class Utils {
 		return Math.sqrt(x1 + y1);
 	}
 
-	// Added by us
 	public static void gameOverMessage() {
 		JOptionPane.showMessageDialog(null, "Game Over!!!");
 	}
