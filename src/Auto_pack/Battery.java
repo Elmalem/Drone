@@ -15,9 +15,6 @@ public class Battery {
 	public void setStamina() {
 		if(GameVariabales.toogleAI)
 			this.stamina -= 0.5;
-		if(this.stamina < 0.5) {
-			Utils.gameOverMessage();
-		}
 	}
 	
 	public String toString() {

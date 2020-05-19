@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 public class Painter extends JComponent {
 	
 	private static final long serialVersionUID = 5899668374057151639L;
+	public static boolean paintLaser = false;
 	
 	public Painter() {}
 	

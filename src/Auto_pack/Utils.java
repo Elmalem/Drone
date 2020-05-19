@@ -112,18 +112,7 @@ public class Utils {
 
 		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
 
-		if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50) {
-			if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) < Config.max_distance_between_points) {
-				if (GameVariabales.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
-						dronePoint) < Config.max_distance_between_points / 5) {
-					Utils.speedDown();
-				} else {
-					Utils.removeLastPoint();
-				}
-			}
-		} else {
-			Utils.interestedPoints(dronePoint);
-		}
+		Utils.isReturnHome(dronePoint);
 
 		GameVariabales.spin_by = Config.max_angle_risky;
 
@@ -159,15 +148,9 @@ public class Utils {
 				if (a > 270 && b > 270) {
 
 					GameVariabales.is_lidars_max = true;
-					if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50) {
-						if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
-								dronePoint) < Config.max_distance_between_points) {
-							Utils.removeLastPoint();
-						}
-					} else {
-						Utils.interestedPoints(dronePoint);
-					}
-
+					Utils.isReturnHome(dronePoint);
+					GameVariabales.spin_by = 90;
+					Utils.isReturnHome(dronePoint);
 					Point l1 = Utils.getPointByDistance(dronePoint,
 							GameVariabales.drone.getLidars().get(1).getDegrees()
 									+ GameVariabales.drone.getGyroRotation(),
@@ -180,10 +163,7 @@ public class Utils {
 					double dis_to_lidar1 = Utils.getDistanceBetweenPoints(last_point, l1);
 					double dis_to_lidar2 = Utils.getDistanceBetweenPoints(last_point, l2);
 
-					GameVariabales.spin_by = 90;
-
-					if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50
-							|| dis_to_lidar1 < dis_to_lidar2) {
+					if (dis_to_lidar1 < dis_to_lidar2) {
 						GameVariabales.spin_by *= -1;
 					}
 
@@ -193,14 +173,7 @@ public class Utils {
 					}
 				}
 
-				// Alarmed the drone entered the wall (should not happened)
-				if (GameVariabales.realMap.isCollide((int) (GameVariabales.drone.getPointOnMap().getX()),
-						(int) (GameVariabales.drone.getPointOnMap().getY()))) {
-					stopCPUS();
-					GameVariabales.gameEnd = true;
-					gameOverMessage();
-					System.exit(0);
-				}
+				Utils.isBlock();
 
 				Utils.spinBy(GameVariabales.spin_by, true, new Func() {
 					@Override
@@ -210,6 +183,18 @@ public class Utils {
 					}
 				});
 			}
+		}
+	}
+
+	public static void isBlock() {
+		// Alarmed the drone entered the wall (should not happened)
+		if (GameVariabales.realMap.isCollide((int) (GameVariabales.drone.getPointOnMap().getX()),
+				(int) (GameVariabales.drone.getPointOnMap().getY()))
+				|| GameVariabales.drone.getBattery().getStamina() < 0) {
+			stopCPUS();
+			GameVariabales.gameEnd = true;
+			gameOverMessage();
+			System.exit(0);
 		}
 	}
 
@@ -226,6 +211,64 @@ public class Utils {
 						.get(GameVariabales.points.size() - 1)) > minDistanceBetweenImportantPoints) {
 			GameVariabales.points.add(dronePoint);
 			GameVariabales.graph.addVertex(GameVariabales.drone.getPointOnMap());
+		}
+	}
+
+	public static float getAngle(Point target, Point source) {
+		float angle = (float) Math.toDegrees(Math.atan2(target.getY() - source.getY(), target.getX() - source.getX()));
+		if (angle < 0)
+			angle += 360;
+		return angle;
+	}
+
+	public static void returnHome(Point dronePoint) {
+		float angleToInitPoint = Utils.getAngle(GameVariabales.init_point, dronePoint);
+		double rotation = GameVariabales.drone.getGyroRotation();
+		System.out.println("angle to init : " + angleToInitPoint + " , rotation : " + rotation);
+		if (Math.abs(rotation - angleToInitPoint) > 10) {
+			GameVariabales.spin_by *= -1;
+		}
+	}
+
+	public static void isReturnHome(Point dronePoint) {
+		if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50) {
+			// Implementing the technique
+			if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(), dronePoint) < Config.max_distance_between_points) {
+				if (GameVariabales.points.size() <= 1 && Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
+						dronePoint) < Config.max_distance_between_points / 5) {
+					Utils.speedDown();
+				} else {
+					Utils.removeLastPoint();
+				}
+			}
+			//
+		} else {
+			Utils.interestedPoints(dronePoint);
+		}
+
+		if (GameVariabales.is_risky && !GameVariabales.try_to_escape) {
+			//
+			if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50) {
+				if (Utils.getDistanceBetweenPoints(Utils.getLastPoint(),
+						dronePoint) < Config.max_distance_between_points) {
+					Utils.removeLastPoint();
+				}
+			} else {
+				Utils.interestedPoints(dronePoint);
+			}
+			Lidar lidar1 = GameVariabales.drone.getLidars().get(1);
+			double a = lidar1.getCurrentDistance();
+			Lidar lidar2 = GameVariabales.drone.getLidars().get(2);
+			double b = lidar2.getCurrentDistance();
+
+			if (a > 270 && b > 270) {
+
+				if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() <= 50) {
+					returnHome(dronePoint);
+				}
+
+			}
+			//
 		}
 	}
 
