@@ -81,14 +81,8 @@ public class GameVariabales {
 	public static Graph graph;
 	public static boolean gameEnd = false;
 	public static boolean is_init = true;
-	public static double lastFrontLidarDis = 0;
-	public static boolean isRotateRight = false;
-	public static double changedRight = 0;
-	public static double changedLeft = 0;
-	public static boolean tryToEscape = false;
 	public static int leftOrRight = 1;
 	public static boolean is_finish = true;
-	public static boolean isLeftRightRotationEnable = true;
 	public static boolean is_risky = false;
 	public static boolean try_to_escape = false;
 	public static double risky_dis = 0;
