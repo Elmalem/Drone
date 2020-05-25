@@ -100,7 +100,6 @@ public class Utils {
 		if (!GameVariabales.toogleAI) {
 			return;
 		}
-
 		if (GameVariabales.is_init) {
 			Utils.speedUp();
 			Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
@@ -111,6 +110,8 @@ public class Utils {
 		}
 
 		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
+
+		Utils.isReturnHome(dronePoint, deltaTime);
 
 		GameVariabales.spin_by = Config.max_angle_risky;
 
@@ -181,14 +182,13 @@ public class Utils {
 			}
 			Utils.interestedPoints(dronePoint);
 		}
-		Utils.isReturnHome(dronePoint);
 	}
 
 	public static void isBlock() {
 		// Alarmed the drone entered the wall (should not happened)
-		if (GameVariabales.realMap.isCollide((int) (GameVariabales.drone.getPointOnMap().getX()),
-				(int) (GameVariabales.drone.getPointOnMap().getY()))
-				|| GameVariabales.drone.getBattery().getStamina() < 0) {
+		if ((Utils.getDistanceBetweenPoints(GameVariabales.drone.getOpticalSensorLocation(),
+				GameVariabales.init_point) < 10 && GameVariabales.return_home)
+				|| GameVariabales.drone.getBattery().getStamina() <= 0) {
 			stopCPUS();
 			GameVariabales.gameEnd = true;
 			clientMessage("Game over");
@@ -217,17 +217,52 @@ public class Utils {
 		return 180.0 / Math.PI * Math.atan2(a.getX() - b.getX(), a.getY() - b.getY());
 	}
 
-	public static void returnHome(Point dronePoint) {
-		for (int i = 0; i < GameVariabales.points.size(); i++) {
-			if (Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(i)) <= 5) {
-				Utils.removePoint(dronePoint, i);
+	public static void returnHome(Point dronePoint, int deltaTime) {
+		Point l0 = Utils.getPointByDistance(dronePoint,
+				GameVariabales.drone.getLidars().get(0).getDegrees() + GameVariabales.drone.getGyroRotation(),
+				GameVariabales.drone.getLidars().get(0).getCurrentDistance());
+		Point l1 = Utils.getPointByDistance(dronePoint,
+				GameVariabales.drone.getLidars().get(1).getDegrees() + GameVariabales.drone.getGyroRotation(),
+				GameVariabales.drone.getLidars().get(1).getCurrentDistance());
+		Point l2 = Utils.getPointByDistance(dronePoint,
+				GameVariabales.drone.getLidars().get(2).getDegrees() + GameVariabales.drone.getGyroRotation(),
+				GameVariabales.drone.getLidars().get(2).getCurrentDistance());
+
+		if (GameVariabales.points.size() >= 1) {
+			Point temp = GameVariabales.points.get(GameVariabales.points.size() - 1);
+			double dist0 = Utils.getDistanceBetweenPoints(l0, temp);
+			double dist1 = Utils.getDistanceBetweenPoints(l1, temp);
+			double dist2 = Utils.getDistanceBetweenPoints(l2, temp);
+			double dist00 = Utils.getDistanceBetweenPoints(l0, GameVariabales.init_point);
+			double dist11 = Utils.getDistanceBetweenPoints(l1, GameVariabales.init_point);
+			double dist22 = Utils.getDistanceBetweenPoints(l2, GameVariabales.init_point);
+			
+			if ((dist0 > dist1 && dist0 > dist2) && (dist00 > dist11 && dist00 > dist22)) {
+				System.out.println("here");
+				Utils.spinBy(180,GameVariabales.flag);
+				GameVariabales.flag = false;
+			}
+			else if((dist0 < dist1 && dist0 < dist2) && (dist00 < dist11 && dist00 < dist22)) {
+				GameVariabales.flag = false;
+			}
+
+			for (int i = 0; i < GameVariabales.points.size(); i++) {
+				if (Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(i)) <= 15) {
+					if(i == 0) {
+						stopCPUS();
+						GameVariabales.gameEnd = true;
+						clientMessage("Arrived");
+						System.exit(0);
+					}				
+					Utils.removePoint(dronePoint, i);
+				}
 			}
 		}
 	}
 
-	public static void isReturnHome(Point dronePoint) {
+	public static void isReturnHome(Point dronePoint, int deltaTime) {
 		if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() < 50) {
-			returnHome(dronePoint);
+			returnHome(dronePoint, deltaTime);
 			if (Utils.getDistanceBetweenPoints(GameVariabales.drone.getPointOnMap(), GameVariabales.init_point) <= 50) {
 				stopCPUS();
 				GameVariabales.gameEnd = true;

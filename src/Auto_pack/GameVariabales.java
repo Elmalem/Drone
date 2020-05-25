@@ -89,6 +89,7 @@ public class GameVariabales {
 	public static boolean is_lidars_max = false;
 	public static boolean start_return_home = false;
 	public static Point init_point;
+	public static boolean flag = true;
 	public static int counter = 0;
 	public static double lastGyroRotation = 0;
 }
