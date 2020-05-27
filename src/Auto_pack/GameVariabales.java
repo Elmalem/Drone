@@ -14,7 +14,7 @@ public class GameVariabales {
 	};
 
 	public static void init() {
-		GameVariabales.realMap = new Map(Config.imageSourcePath + "\\Maps\\p1" + Config.map_index + ".png");
+		GameVariabales.realMap = new Map(Config.imageSourcePath + Config.mapLocation + Config.map_index + ".png");
 		GameVariabales.degrees_left = new ArrayList<>();
 		GameVariabales.degrees_left_func = new ArrayList<>();
 		GameVariabales.points = new ArrayList<Point>();
