@@ -47,7 +47,7 @@ public class GameVariabales {
 		batteryCPU.addFunction(Utils::batteryUpdate);
 		batteryCPU.play();
 		
-		CPU ai_cpu = new CPU(200, "Auto_AI");
+		GameVariabales.ai_cpu = new CPU(200, "Auto_AI");
 		ai_cpu.addFunction(Utils::updateAi);
 		ai_cpu.play();
 
@@ -59,13 +59,20 @@ public class GameVariabales {
 		CPU updatesCPU = new CPU(60, "updates");
 		updatesCPU.addFunction(GameVariabales.drone::update);
 		updatesCPU.play();
+	
+		CPU returnHomeCPU = new CPU(100,"Return home");
+		returnHomeCPU.addFunction(Utils::isReturnHome);
+		returnHomeCPU.play();
 
 		CPU infoCPU = new CPU(6, "update_info");
 		infoCPU.addFunction(Utils::updateInfo);
 		infoCPU.play();
 
 	}
-
+	
+	public static CPU ai_cpu;
+	public static boolean onlyOnce=true;
+	public static double lastDistance;
 	public static boolean return_home = false, toogleStop = true, toogleRealMap = true, toogleAI = false;
 	public static List<CPU> all_cpus = null;
 	public static Map realMap;
@@ -85,6 +92,7 @@ public class GameVariabales {
 	public static boolean is_finish = true;
 	public static boolean is_risky = false;
 	public static boolean try_to_escape = false;
+	public static double lastDistanceDuringReturnHome = 0;
 	public static double risky_dis = 0;
 	public static boolean is_lidars_max = false;
 	public static boolean start_return_home = false;

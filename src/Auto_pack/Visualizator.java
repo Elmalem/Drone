@@ -91,13 +91,6 @@ public class Visualizator {
 		returnBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				GameVariabales.return_home = true;
-				Utils.speedDown();
-				Utils.spinBy(180, true, new Func() {
-					@Override
-					public void method() {
-						Utils.speedUp();
-					}
-				});	
 			}
 		});
 		returnBtn.setBounds(ButtonWeights.get(0), ButtonHeights.get(3), 110, 30);
