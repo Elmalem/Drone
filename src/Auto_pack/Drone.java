@@ -1,5 +1,4 @@
 package Auto_pack;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,19 +13,19 @@ public class Drone {
 	private Point sensorOpticalFlow;
 	private Point location;
 	private CPU cpu;
-	//
+	
 	private List<Lidar> lidars;
-	//
+	
 	private Battery battery;
 
 	public Drone() {
 		this.location = new Point();
 		this.sensorOpticalFlow = new Point();
 		this.lidars = new ArrayList<>();
-		this.speed = 0.5;
+		this.speed = 0.5;	
 		this.rotation = 0;
-		this.gyroRotation = rotation;
-		this.cpu = new CPU(100, "Drone");
+		this.gyroRotation = rotation;	
+		this.cpu = new CPU(100,"Drone");
 		this.setBattery(new Battery());
 	}
 
@@ -38,9 +37,6 @@ public class Drone {
 		cpu.stop();
 	}
 
-	public CPU getCpu() {
-		return this.cpu;
-	}
 
 	public void addLidar(int degrees) {
 		Lidar lidar = new Lidar(degrees);
@@ -49,76 +45,55 @@ public class Drone {
 	}
 
 	public Point getPointOnMap() {
-		double x = Config.startPoints[Config.map_index - 1].getX() + location.getX();
-		double y = Config.startPoints[Config.map_index - 1].getY() + location.getY();
-		return new Point(x, y);
+		double x = Config.startPoints[Config.map_index-1].getX() + location.getX();
+		double y = Config.startPoints[Config.map_index-1].getY() + location.getY();
+		return new Point(x,y);
 	}
+	
+	/*
+	 * Rearrange rotation before collision OR when we want to return home and going far away
+	 */
+	public void update(int deltaTime) {	
+		Long dt=(long) 1000;
 
-	public void setSpeed(double speed) {
-		this.speed = speed;
-	}
+		Point dronePoint=GameVariabales.drone.getOpticalSensorLocation();
 
-	public void update(int deltaTime) {
-		double distancedMoved;
-		/*
-		 * Rearrange rotation before collision
-		 */
-
-		if (lidars.get(0).getCurrentDistance() < Config.minimumCenterDistanceToWall && !GameVariabales.is_init) {
-			speed = 0;
+		if((GameVariabales.toogleAI &&lidars.get(0).getCurrentDistance() < Config.minimumCenterDistanceToWall && !GameVariabales.is_init )||
+				(Utils.isReturnHome(dronePoint,deltaTime) && !Utils.isHomeDirection(dronePoint))) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(dt);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			}	
 			int rotateTo = lidars.get(1).getCurrentDistance() < lidars.get(2).getCurrentDistance() ? 2 : 1;
-			switch (rotateTo) {
-			case 1:
-				this.rotateLeft(deltaTime);
+			switch(rotateTo) {
+			case 1 : 
+				rotateLeft(deltaTime);
 				break;
-			case 2:
-				this.rotateRight(deltaTime);
+			case 2 : 
+				rotateRight(deltaTime);
 				break;
 			}
-			speed = 1;
 		}
-
-		if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() < 50) {
-			Point l00 = Utils.getPointByDistance(this.sensorOpticalFlow,
-					GameVariabales.drone.getLidars().get(0).getDegrees() + GameVariabales.drone.getGyroRotation(),
-					GameVariabales.drone.getLidars().get(0).getCurrentDistance());
-			double dist00 = Utils.getDistanceBetweenPoints(l00, GameVariabales.init_point);
-			if (!Utils.isHomeDirection(this.sensorOpticalFlow)) {
-				System.out.println("Here ... ");
-				GameVariabales.drone.setSpeed(0);
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				Utils.spinBy(180, true);
-				GameVariabales.drone.setSpeed(Config.max_speed);
-			}
-			Point l01 = Utils.getPointByDistance(this.sensorOpticalFlow,
-					GameVariabales.drone.getLidars().get(0).getDegrees() + GameVariabales.drone.getGyroRotation(),
-					GameVariabales.drone.getLidars().get(0).getCurrentDistance());
-			double dist01 = Utils.getDistanceBetweenPoints(l00, GameVariabales.init_point);
-		}
-
-		//
-		distancedMoved = (speed * 100) * ((double) deltaTime / 1000);
-		location = Utils.getPointByDistance(location, rotation, distancedMoved);
-		double noiseToDistance = Utils.noiseBetween(Config.min_motion_accuracy, Config.max_motion_accuracy, false);
-		sensorOpticalFlow = Utils.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved * noiseToDistance);
-		double noiseToRotation = Utils.noiseBetween(Config.min_rotation_accuracy, Config.max_rotation_accuracy, false);
-		double milli_per_minute = 60000;
-		gyroRotation += (1 - noiseToRotation) * deltaTime / milli_per_minute;
+		if(Utils.isReturnHome(dronePoint,deltaTime) && !Utils.isHomeDirection(dronePoint))
+			return;
+		
+		goForward(deltaTime);//Move forward
+	}
+	
+	public void goForward(int deltaTime) {
+		double distancedMoved = (speed*100)*((double)deltaTime/1000);
+		location =  Utils.getPointByDistance(location, rotation, distancedMoved);
+		double noiseToDistance = Utils.noiseBetween(Config.min_motion_accuracy,Config.max_motion_accuracy,false);
+		sensorOpticalFlow = Utils.getPointByDistance(sensorOpticalFlow, rotation, distancedMoved*noiseToDistance);		
+		double noiseToRotation = Utils.noiseBetween(Config.min_rotation_accuracy,Config.max_rotation_accuracy,false);
+		gyroRotation += (1 - noiseToRotation) * deltaTime/ 60000;
 		gyroRotation = formatRotation(gyroRotation);
 	}
 
 	public static double formatRotation(double rotationValue) {
 		rotationValue %= 360;
-		if (rotationValue < 0) {
+		if(rotationValue < 0) {
 			rotationValue = 360 - rotationValue;
 		}
 		return rotationValue;
@@ -137,46 +112,53 @@ public class Drone {
 	}
 
 	public void rotateLeft(int deltaTime) {
-		double rotationChanged = Config.rotation_per_second * deltaTime / 1000;
+		double rotationChanged = Config.rotation_per_second * deltaTime / 1000;	
 		rotation += rotationChanged;
-		rotation = formatRotation(rotation);
+		rotation = formatRotation(rotation);	
 		gyroRotation += rotationChanged;
 		gyroRotation = formatRotation(gyroRotation);
 	}
 
 	public void rotateRight(int deltaTime) {
-		double rotationChanged = -Config.rotation_per_second * deltaTime / 1000;
+		double rotationChanged = -Config.rotation_per_second * deltaTime / 1000;	
 		rotation += rotationChanged;
-		rotation = formatRotation(rotation);
+		rotation = formatRotation(rotation);	
 		gyroRotation += rotationChanged;
 		gyroRotation = formatRotation(gyroRotation);
 	}
 
 	public void speedUp(int deltaTime) {
-		speed += (Config.accelerate_per_second * deltaTime / 1000);
-		if (speed > Config.max_speed) {
-			speed = Config.max_speed;
+		speed += (Config.accelerate_per_second*deltaTime/1000);
+		if(speed > Config.max_speed) {
+			speed =Config.max_speed;
 		}
 	}
 
-	public List<Lidar> getLidars() {
+	public void setSpeed(double s) {
+		this.speed=s;
+	}
+	public double getSpeed() {
+		return speed;
+	}
+
+	public List<Lidar> getLidars(){
 		return this.lidars;
 	}
 
 	public void slowDown(int deltaTime) {
-		speed -= (Config.accelerate_per_second * deltaTime / 1000);
-		if (speed < 0) {
+		speed -= (Config.accelerate_per_second*deltaTime/1000);
+		if(speed < 0) {
 			speed = 0;
 		}
 	}
 
 	public String getInfoHTML() {
-		DecimalFormat df = new DecimalFormat("#.####");
+		DecimalFormat df = new DecimalFormat("#.####");		
 		String info = "<html>";
-		info += "Rotation: " + df.format(rotation) + "<br>";
-		info += "Location: " + location + "<br>";
-		info += "gyroRotation: " + df.format(gyroRotation) + "<br>";
-		info += "sensorOpticalFlow: " + sensorOpticalFlow + "<br>";
+		info += "Rotation: " + df.format(rotation) +"<br>";
+		info += "Location: " + location +"<br>";
+		info += "gyroRotation: " + df.format(gyroRotation) +"<br>";
+		info += "sensorOpticalFlow: " + sensorOpticalFlow +"<br>";
 		info += "</html>";
 		return info;
 	}

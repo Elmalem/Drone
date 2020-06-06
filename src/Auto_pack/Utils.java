@@ -10,7 +10,10 @@ import javax.swing.JOptionPane;
  */
 
 public class Utils {
-
+	static boolean onlyOnce=true;
+	static double lastDistance;
+	
+	
 	public static void stopAllCPUS() {
 		for (int i = 0; i < GameVariabales.all_cpus.size(); i++) {
 			GameVariabales.all_cpus.get(i).setPlay();
@@ -112,9 +115,6 @@ public class Utils {
 		Point dronePoint = GameVariabales.drone.getOpticalSensorLocation();
 
 		GameVariabales.spin_by = Config.max_angle_risky;
-
-		Utils.isBlock();
-
 		if (!GameVariabales.is_risky) {
 
 			Lidar lidar0 = GameVariabales.drone.getLidars().get(0);
@@ -145,7 +145,6 @@ public class Utils {
 				double b = lidar2.getCurrentDistance();
 
 				if (a > 270 && b > 270) {
-
 					GameVariabales.is_lidars_max = true;
 					GameVariabales.spin_by = 90;
 					Point l1 = Utils.getPointByDistance(dronePoint,
@@ -170,6 +169,8 @@ public class Utils {
 					}
 				}
 
+				Utils.isBlock();
+
 				Utils.spinBy(GameVariabales.spin_by, true, new Func() {
 					@Override
 					public void method() {
@@ -180,7 +181,6 @@ public class Utils {
 			}
 			Utils.interestedPoints(dronePoint);
 		}
-
 	}
 
 	public static void isBlock() {
@@ -197,15 +197,8 @@ public class Utils {
 
 	public static void interestedPoints(Point dronePoint) {
 		int importantDistToWall = 10;
-		int minDistanceBetweenImportantPoints = 20;
-		if (((GameVariabales.drone.getLidars().get(0).getCurrentDistance() < 20
-				&& GameVariabales.drone.getLidars().get(1).getCurrentDistance() < importantDistToWall)
-				|| (GameVariabales.drone.getLidars().get(0).getCurrentDistance() < 20
-						&& GameVariabales.drone.getLidars().get(2).getCurrentDistance() < importantDistToWall)
-				|| (GameVariabales.drone.getLidars().get(1).getCurrentDistance() < importantDistToWall
-						&& GameVariabales.drone.getLidars().get(2).getCurrentDistance() < importantDistToWall))
-				&& Utils.getDistanceBetweenPoints(dronePoint,
-						GameVariabales.points.get(GameVariabales.points.size() - 1)) > minDistanceBetweenImportantPoints
+		int minDistanceBetweenImportantPoints = 80;
+		if (Utils.getDistanceBetweenPoints(dronePoint,GameVariabales.points.get(GameVariabales.points.size() - 1)) > minDistanceBetweenImportantPoints
 				&& !GameVariabales.return_home) {
 			GameVariabales.points.add(dronePoint);
 			GameVariabales.graph.addVertex(GameVariabales.drone.getPointOnMap());
@@ -216,56 +209,47 @@ public class Utils {
 		return 180.0 / Math.PI * Math.atan2(a.getX() - b.getX(), a.getY() - b.getY());
 	}
 
-	public static boolean isHomeDirection(Point dronePoint) {// $%$%$%$%$%$%$%$%$%$%%$$%$%$%$%$%$%$%$%$%%$%$%$%$%$%%$%$%%$%$$$%$%$%$%
-		if (GameVariabales.onlyOnce) {
-			GameVariabales.lastDistance = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
-			GameVariabales.onlyOnce = false;
+	public static boolean isHomeDirection(Point dronePoint) {//$%$%$%$%$%$%$%$%$%$%%$$%$%$%$%$%$%$%$%$%%$%$%$%$%$%%$%$%%$%$$$%$%$%$%
+		if(onlyOnce) {
+			lastDistance=Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			onlyOnce=false;
 		}
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		double d = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
-
-		if (GameVariabales.lastDistance < d) {
-			GameVariabales.lastDistance = d;
+		double d=Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
+		if(lastDistance<d) {
 			return false;
-		} else {
-			GameVariabales.lastDistance = d;
+		}else {
+			lastDistance=d;//if the boundary get smaller, update the boundary
 			return true;
 		}
 	}
-
-	public static void isOnPointDuringReturnHome(Point dronePoint) {
-		for (int i = 0; i < GameVariabales.points.size(); i++) {
-			if (Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(i)) <= 15) {
-				if (i == 0) {
-					stopCPUS();
-					GameVariabales.gameEnd = true;
-					clientMessage("Arrived");
-					System.exit(0);
+	
+	public static void deletInterestedPoints(Point dronePoint, int deltaTime) {//)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+		if (GameVariabales.points.size() >= 1) {
+			for (int i = 0; i < GameVariabales.points.size(); i++) {
+				if (Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(i)) <= 15) {
+					if(i == 0) {
+						stopCPUS();
+						GameVariabales.gameEnd = true;
+						clientMessage("Arrived");
+						System.exit(0);
+					}				
+					Utils.removePoint(dronePoint, i);
 				}
-				Utils.removePoint(dronePoint, i);
 			}
 		}
 	}
 
-	public static void isArrivedHome() {
-		if (Utils.getDistanceBetweenPoints(GameVariabales.drone.getPointOnMap(), GameVariabales.init_point) <= 50) {
-			stopCPUS();
-			GameVariabales.gameEnd = true;
-			clientMessage("Arrived home");
-		}
-	}
-
-	public static void isReturnHome(int deltaTime) {
+	public static boolean isReturnHome(Point dronePoint, int deltaTime) {//???????????????????????????????????????????????????????????????????????
 		if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() < 50) {
-			Utils.isArrivedHome();
+			deletInterestedPoints(dronePoint, deltaTime);
+			return true;
 		}
-		GameVariabales.lastDistanceDuringReturnHome = Utils.getDistanceBetweenPoints(this.sensorOpticalFlow,
-				GameVariabales.init_point);
-		Utils.isOnPointDuringReturnHome(GameVariabales.drone.getOpticalSensorLocation());
+		return false;
 	}
 
 	public static void batteryUpdate(int deltaTime) {
@@ -295,15 +279,12 @@ public class Utils {
 	}
 
 	public static void initMap() {
-
 		GameVariabales.map = new GameVariabales.PixelState[Config.map_size][Config.map_size];
-
 		for (int i = 0; i < Config.map_size; i++) {
 			for (int j = 0; j < Config.map_size; j++) {
 				GameVariabales.map[i][j] = GameVariabales.PixelState.unexplored;
 			}
 		}
-
 		GameVariabales.droneStartingPoint = new Point(Config.map_size / 2, Config.map_size / 2);
 	}
 
@@ -392,6 +373,7 @@ public class Utils {
 
 			int direction = (int) (degrees_left_to_rotate / Math.abs(degrees_left_to_rotate));
 			GameVariabales.drone.rotateLeft(deltaTime * direction);
+			
 		} else
 			return;
 	}
