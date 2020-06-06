@@ -169,7 +169,6 @@ public class Utils {
 					}
 				}
 
-				Utils.isBlock();
 
 				Utils.spinBy(GameVariabales.spin_by, true, new Func() {
 					@Override
@@ -181,6 +180,7 @@ public class Utils {
 			}
 			Utils.interestedPoints(dronePoint);
 		}
+		Utils.isBlock();
 	}
 
 	public static void isBlock() {
@@ -196,8 +196,7 @@ public class Utils {
 	}
 
 	public static void interestedPoints(Point dronePoint) {
-		int importantDistToWall = 10;
-		int minDistanceBetweenImportantPoints = 80;
+		int minDistanceBetweenImportantPoints = 100;
 		if (Utils.getDistanceBetweenPoints(dronePoint,GameVariabales.points.get(GameVariabales.points.size() - 1)) > minDistanceBetweenImportantPoints
 				&& !GameVariabales.return_home) {
 			GameVariabales.points.add(dronePoint);
@@ -211,19 +210,19 @@ public class Utils {
 
 	public static boolean isHomeDirection(Point dronePoint) {//$%$%$%$%$%$%$%$%$%$%%$$%$%$%$%$%$%$%$%$%%$%$%$%$%$%%$%$%%$%$$$%$%$%$%
 		if(onlyOnce) {
-			lastDistance=Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
+			lastDistance = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			onlyOnce=false;
+			onlyOnce = false;
 		}
-		double d=Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
-		if(lastDistance<d) {
+		double d = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
+		if(lastDistance < d) {
 			return false;
 		}else {
-			lastDistance=d;//if the boundary get smaller, update the boundary
+			lastDistance = d;//if the boundary get smaller, update the boundary
 			return true;
 		}
 	}
