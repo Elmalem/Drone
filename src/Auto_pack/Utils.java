@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 public class Utils {
 	static boolean onlyOnce=true;
 	static double lastDistance;
-	
+	static int lastTime;
 	
 	public static void stopAllCPUS() {
 		for (int i = 0; i < GameVariabales.all_cpus.size(); i++) {
@@ -180,18 +180,23 @@ public class Utils {
 			}
 			Utils.interestedPoints(dronePoint);
 		}
+		Utils.isReturnHome(dronePoint, deltaTime);
 		Utils.isBlock();
 	}
 
 	public static void isBlock() {
 		// Alarmed the drone entered the wall (should not happened)
-		if ((Utils.getDistanceBetweenPoints(GameVariabales.drone.getOpticalSensorLocation(),
-				GameVariabales.init_point) < 10 && GameVariabales.return_home)
-				|| GameVariabales.drone.getBattery().getStamina() <= 0) {
+		if (GameVariabales.drone.getBattery().getStamina() <= 0) {
 			stopCPUS();
 			GameVariabales.gameEnd = true;
 			clientMessage("Game over");
 			System.exit(0);
+		}
+		if (!GameVariabales.is_init && GameVariabales.return_home && Utils.getDistanceBetweenPoints(GameVariabales.drone.getOpticalSensorLocation(), GameVariabales.points.get(0)) <= 15) {
+				stopCPUS();
+				GameVariabales.gameEnd = true;
+				clientMessage("Arrived");
+				System.exit(0);
 		}
 	}
 
@@ -211,6 +216,7 @@ public class Utils {
 	public static boolean isHomeDirection(Point dronePoint) {//$%$%$%$%$%$%$%$%$%$%%$$%$%$%$%$%$%$%$%$%%$%$%$%$%$%%$%$%%$%$$$%$%$%$%
 		if(onlyOnce) {
 			lastDistance = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
+			lastTime = Timer.getTimeBySeconds();
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -220,8 +226,11 @@ public class Utils {
 		}
 		double d = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
 		if(lastDistance < d) {
+			lastTime = Timer.getTimeBySeconds();
+			lastDistance = d;//if the boundary get smaller, update the boundary
 			return false;
 		}else {
+			lastTime = Timer.getTimeBySeconds();
 			lastDistance = d;//if the boundary get smaller, update the boundary
 			return true;
 		}
@@ -229,14 +238,8 @@ public class Utils {
 	
 	public static void deletInterestedPoints(Point dronePoint, int deltaTime) {//)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
 		if (GameVariabales.points.size() >= 1) {
-			for (int i = 0; i < GameVariabales.points.size(); i++) {
-				if (Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(i)) <= 15) {
-					if(i == 0) {
-						stopCPUS();
-						GameVariabales.gameEnd = true;
-						clientMessage("Arrived");
-						System.exit(0);
-					}				
+			for (int i = 1; i < GameVariabales.points.size(); i++) {
+				if (Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(i)) <= 15) {		
 					Utils.removePoint(dronePoint, i);
 				}
 			}
@@ -270,11 +273,7 @@ public class Utils {
 		Utils.updateVisited();
 		Utils.updateMapByLidars();
 		Utils.ai(deltaTime);
-		if (GameVariabales.isSpeedUp) {
-			GameVariabales.drone.speedUp(deltaTime);
-		} else {
-			GameVariabales.drone.slowDown(deltaTime);
-		}
+		Utils.speedUpdate(deltaTime);
 	}
 
 	public static void initMap() {
@@ -285,6 +284,14 @@ public class Utils {
 			}
 		}
 		GameVariabales.droneStartingPoint = new Point(Config.map_size / 2, Config.map_size / 2);
+	}
+	
+	public static void speedUpdate(int deltaTime) {
+		if (GameVariabales.isSpeedUp) {
+			GameVariabales.drone.speedUp(deltaTime);
+		} else {
+			GameVariabales.drone.slowDown(deltaTime);
+		}
 	}
 
 	public static void speedUp() {

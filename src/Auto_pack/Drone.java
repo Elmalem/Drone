@@ -76,35 +76,17 @@ public class Drone {
 				break;
 			}
 		}
-		
-		Point l0 = Utils.getPointByDistance(dronePoint,
-				GameVariabales.drone.getLidars().get(0).getDegrees()
-				+ GameVariabales.drone.getGyroRotation(),
-				GameVariabales.drone.getLidars().get(0).getCurrentDistance());
-		
-		// Return home
-		if (Utils.isReturnHome(dronePoint, deltaTime) && !Utils.isHomeDirection(dronePoint)) {
+
+		// Return home situation
+		if (Timer.getTimeBySeconds() - Utils.lastTime > 2
+				&& !GameVariabales.is_init
+				&& Utils.lastDistance < Utils.getDistanceBetweenPoints(this.sensorOpticalFlow,
+						GameVariabales.init_point)
+				&& Utils.isReturnHome(dronePoint, deltaTime) 
+				&& !Utils.isHomeDirection(dronePoint)) {
 			uturn(deltaTime);
-			goForward(3 * deltaTime);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return;
 		}
 
-		// Fix the rest
-		if (!GameVariabales.is_init && Utils.isHomeDirection(dronePoint) && !Utils.isReturnHome(dronePoint, deltaTime)) {
-			uturn(deltaTime);
-			goForward(3 * deltaTime);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return;
-		}
 		goForward(deltaTime);
 	}
 
