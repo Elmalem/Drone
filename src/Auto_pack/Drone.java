@@ -78,12 +78,22 @@ public class Drone {
 		}
 
 		// Return home situation
-		if (Timer.getTimeBySeconds() - Utils.lastTime > 2
+		if (Timer.getTimeBySeconds() - Utils.lastTime > 3
 				&& !GameVariabales.is_init
 				&& Utils.lastDistance < Utils.getDistanceBetweenPoints(this.sensorOpticalFlow,
 						GameVariabales.init_point)
 				&& Utils.isReturnHome(dronePoint, deltaTime) 
 				&& !Utils.isHomeDirection(dronePoint)) {
+			uturn(deltaTime);
+		}
+		
+		// Fix the rest
+		if(Timer.getTimeBySeconds() - Utils.fixlastTime > 3
+				&& !GameVariabales.is_init
+				&& Utils.fixlastDistance > Utils.getDistanceBetweenPoints(this.sensorOpticalFlow,
+						GameVariabales.init_point)
+				&& !Utils.isReturnHome(dronePoint, deltaTime) 
+				&& Utils.isHomeDirection(dronePoint)) {
 			uturn(deltaTime);
 		}
 

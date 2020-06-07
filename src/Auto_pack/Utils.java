@@ -14,6 +14,11 @@ public class Utils {
 	static double lastDistance;
 	static int lastTime;
 	
+	static boolean fixonlyOnce=true;
+	static double fixlastDistance;
+	static int fixlastTime;
+	
+	
 	public static void stopAllCPUS() {
 		for (int i = 0; i < GameVariabales.all_cpus.size(); i++) {
 			GameVariabales.all_cpus.get(i).setPlay();
@@ -212,8 +217,31 @@ public class Utils {
 	public static double angle(Point a, Point b) {
 		return 180.0 / Math.PI * Math.atan2(a.getX() - b.getX(), a.getY() - b.getY());
 	}
+	
+	public static boolean isFixDirection(Point dronePoint) {
+		if(fixonlyOnce) {
+			fixlastDistance = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
+			fixlastTime = Timer.getTimeBySeconds();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			fixonlyOnce = false;
+		}
+		double d = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
+		if(fixlastDistance < d) {
+			fixlastTime = Timer.getTimeBySeconds();
+			fixlastDistance = d;//if the boundary get smaller, update the boundary
+			return false;
+		}else {
+			fixlastTime = Timer.getTimeBySeconds();
+			fixlastDistance = d;//if the boundary get smaller, update the boundary
+			return true;
+		}
+	}
 
-	public static boolean isHomeDirection(Point dronePoint) {//$%$%$%$%$%$%$%$%$%$%%$$%$%$%$%$%$%$%$%$%%$%$%$%$%$%%$%$%%$%$$$%$%$%$%
+	public static boolean isHomeDirection(Point dronePoint) {
 		if(onlyOnce) {
 			lastDistance = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
 			lastTime = Timer.getTimeBySeconds();
