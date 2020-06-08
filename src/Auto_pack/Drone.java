@@ -77,7 +77,7 @@ public class Drone {
 			}
 		}
 
-		// Return home situation
+		// Return home situation - if the drone gets stuck, fix his movement 
 		if (Timer.getTimeBySeconds() - Utils.lastTime > 3
 				&& !GameVariabales.is_init
 				&& Utils.lastDistance < Utils.getDistanceBetweenPoints(this.sensorOpticalFlow,
@@ -100,6 +100,7 @@ public class Drone {
 		goForward(deltaTime);
 	}
 
+	//Make the drone move forward
 	public void goForward(int deltaTime) {
 		double distancedMoved = (speed * 100) * ((double) deltaTime / 1000);
 		location = Utils.getPointByDistance(location, rotation, distancedMoved);
@@ -130,6 +131,9 @@ public class Drone {
 		return new Point(sensorOpticalFlow);
 	}
 
+	/*
+	 * Make the drone go the opposite way
+	 */
 	public void uturn(int deltaTime) {
 		rotation += 180;
 		rotation = formatRotation(rotation);

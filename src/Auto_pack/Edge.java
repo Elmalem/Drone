@@ -1,5 +1,8 @@
 package Auto_pack;
 
+/*
+ * This class represent the edges of the graph
+ */
 public class Edge {
 	
 	private Point a;

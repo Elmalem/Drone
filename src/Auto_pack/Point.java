@@ -2,7 +2,7 @@ package Auto_pack;
 import java.text.DecimalFormat;
 
 /*
- * The simple point class
+ * A simple point class- the interested points the drone left behind
  */
 
 public class Point {

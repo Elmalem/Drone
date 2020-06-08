@@ -1,5 +1,8 @@
 package Auto_pack;
 
+/*
+ * A simple class of the drone battery,  starts at 100% and goes down
+ */
 public class Battery {
 
 	private double stamina;

@@ -1,7 +1,7 @@
 package Auto_pack;
 
 /*
- * Add simple clock for count the seconds with thread functionality
+ * A simple clock for count the seconds with thread functionality
  */
 public class Timer extends Thread {
 

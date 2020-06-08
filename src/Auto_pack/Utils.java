@@ -104,6 +104,9 @@ public class Utils {
 		return rotation;
 	}
 
+	/*
+	 * The main function of the movement of the drone
+	 */
 	public static void ai(int deltaTime) {
 		if (!GameVariabales.toogleAI) {
 			return;
@@ -189,6 +192,9 @@ public class Utils {
 		Utils.isBlock();
 	}
 
+	/*
+	 * This function check if the drone enters the wall
+	 */
 	public static void isBlock() {
 		// Alarmed the drone entered the wall (should not happened)
 		if (GameVariabales.drone.getBattery().getStamina() <= 0) {
@@ -205,6 +211,9 @@ public class Utils {
 		}
 	}
 
+	/*
+	 * The drone leaves points behind every 100 meter 
+	 */
 	public static void interestedPoints(Point dronePoint) {
 		int minDistanceBetweenImportantPoints = 100;
 		if (Utils.getDistanceBetweenPoints(dronePoint,GameVariabales.points.get(GameVariabales.points.size() - 1)) > minDistanceBetweenImportantPoints
@@ -218,6 +227,9 @@ public class Utils {
 		return 180.0 / Math.PI * Math.atan2(a.getX() - b.getX(), a.getY() - b.getY());
 	}
 	
+	/*
+	 * Fixes the drone movement if he get stuck
+	 */
 	public static boolean isFixDirection(Point dronePoint) {
 		if(fixonlyOnce) {
 			fixlastDistance = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
@@ -241,6 +253,9 @@ public class Utils {
 		}
 	}
 
+	/*
+	 * check if the drone is at the right way home
+	 */
 	public static boolean isHomeDirection(Point dronePoint) {
 		if(onlyOnce) {
 			lastDistance = Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(0));
@@ -264,7 +279,10 @@ public class Utils {
 		}
 	}
 	
-	public static void deletInterestedPoints(Point dronePoint, int deltaTime) {//)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+	/*
+	 * Delete the points the drone left behind if it is near them
+	 */
+	public static void deletInterestedPoints(Point dronePoint, int deltaTime) {
 		if (GameVariabales.points.size() >= 1) {
 			for (int i = 1; i < GameVariabales.points.size(); i++) {
 				if (Utils.getDistanceBetweenPoints(dronePoint, GameVariabales.points.get(i)) <= 15) {		
@@ -274,7 +292,10 @@ public class Utils {
 		}
 	}
 
-	public static boolean isReturnHome(Point dronePoint, int deltaTime) {//???????????????????????????????????????????????????????????????????????
+	/*
+	 * Check if we clicked the "return home" button or we got half a battery left
+	 */
+	public static boolean isReturnHome(Point dronePoint, int deltaTime) {
 		if (GameVariabales.return_home || GameVariabales.drone.getBattery().getStamina() < 50) {
 			deletInterestedPoints(dronePoint, deltaTime);
 			return true;

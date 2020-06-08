@@ -1,6 +1,9 @@
 package Auto_pack;
 import java.util.ArrayList;
 
+/*
+ * This class represent the graph of the interested points the drone left behind 
+ */
 class Graph {
 	
 	private ArrayList<Edge> edges;
