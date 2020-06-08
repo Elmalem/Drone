@@ -11,6 +11,8 @@ Lioz Elmalem and Snir Shaharabani.
 In this assignment, we had to improve code from two years ago for the Drone Simulator.
 The Drone moves autonomously and now, after some improvements, doesn't get stuck in the walls, but you'll have to see for yourself ...
 
+Another improvement we did on the project, the drone is able to return home without getting stuck in the walls.
+When the "return home" button is pressed or the drone has only half the battery left, the drone will search for the home point, calculate its distance to it, and maintain a smaller distance while on the move. That way the drone will never stay away from home, but will only get closer until it reaches its safe
 
 ## How to use the project:
 
