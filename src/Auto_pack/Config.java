@@ -24,7 +24,7 @@ public class Config {
 	public static final double max_rotation_to_direction = 20;
 	public static final int map_size = 3000;
 	// Individual image source path 
-	public static final String imageSourcePath = "/home/lioz/git/Drone";	
+	public static final String imageSourcePath = System.getProperty("user.dir");
 	public static final int lidarLimit = 300; // in cm
 	public static final int lidarNoise = 1; // in cm 3
 	public static final int CMPerPixel = 5;
